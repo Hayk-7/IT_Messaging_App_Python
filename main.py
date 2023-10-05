@@ -25,7 +25,7 @@ class Interface:
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
 
-        self.root.title("Very Safe Messaging App")
+        self.root.title("WhatsDown")
 
         # Set background image with background() function
         self.background()
@@ -57,3 +57,4 @@ class Interface:
 
 if __name__ == '__main__':
     interface = Interface()
+
