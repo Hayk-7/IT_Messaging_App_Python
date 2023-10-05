@@ -10,25 +10,27 @@ from tkinter import ttk, Tk, Entry
 from PIL import Image, ImageTk
 
 class Interface:
-    def __init__(self):
+    def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, TITLE):
         """"
         Creates the main application window
         """
-        # Set the constant size of the window
-        WINDOW_WIDTH = 512
-        WINDOW_HEIGHT = 1024
+        # Set window width and height
+        self.screen_width = WINDOW_WIDTH
+        self.screen_height = WINDOW_HEIGHT
+        self.title = TITLE
 
+        # Create the main application window
         self.root = Tk()
-        self.root.geometry("290x400")
-        self.root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}")
 
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
+        # Set window size
+        self.root.geometry(f"{self.screen_width}x{self.screen_height}")
 
-        self.root.title("WhatsDown")
+        # Set window title and icon
+        self.root.title(self.title)
+        self.root.iconbitmap("icon.ico")
 
         # Set background image with background() function
-        self.background()
+        self.setBackground()
 
         # Set frame to add buttons
         self.frame = tk.Frame(self.root)
@@ -46,7 +48,7 @@ class Interface:
         self.root.mainloop()
 
 
-    def background(self):
+    def setBackground(self):
         """"
         Adds background image to the main application window
         """
@@ -55,6 +57,8 @@ class Interface:
         self.background_label = tk.Label(self.root, image=self.background_photo)
         self.background_label.place(relwidth=1, relheight=1)
 
+
+
 if __name__ == '__main__':
-    interface = Interface()
+    interface = Interface(512, 1024)
 
