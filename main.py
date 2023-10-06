@@ -46,25 +46,24 @@ class Interface:
         # Add the input box
         self.input_box = tk.Entry(self.root, width=self.screen_width, bg="white", fg="black",
                                   font=("Comic Sans MS", 12), borderwidth=2, relief="sunken")
-        self.input_box.place(x=(self.screen_width//2), y=self.screen_height, height=100,
-                             width=self.screen_width - 400)
+        # self.input_box.place(x=472, y=974)
+        # self.input_box.place(x=(self.screen_width//2), y=self.screen_height, height=0,
+        #                      width=self.screen_width - 400)
         # print(self.input_box.place_info(), 'Here')
 
-        self.input_box.pack()
+        self.input_box.pack(pady=20, side="bottom")
         # self.input_box.place(x=WINDOW_WIDTH/2-100, y=WINDOW_HEIGHT/2-100)
 
         # Add the send button and display it
         self.button_size = self.input_box_height
         send_icon = ImageTk.PhotoImage(Image.open("send_icon.png").resize((self.button_size, self.button_size),
-                                                                          Image.BOX) )# I didn't put self.
-        self.send_button = tk.Button(self.root, height=self.button_size*2, width=self.button_size*2, text='Click Me !',
-                                     image=send_icon).place(x = 472,y = 974)
+                                                                          Image.BOX))  # I didn't put self.
+        self.send_button = tk.Button(self.root, height=self.button_size * 2, width=self.button_size * 2,
+                                     text='Click Me !', image=send_icon)
+        self.send_button.place(x=472, y=974)
         # self.send_button.place(x=(self.screen_width-self.button_size), y=(self.screen_height-self.button_size))
 
         # self.send_button
-
-
-        # self.send_box.pack(pady=40, side="bottom")
 
         self.root.resizable(width=False, height=False)
 
