@@ -39,9 +39,11 @@ class Interface:
         # Add the input box
         self.input_box = tk.Entry(self.root, width=50, font=("Arial", 12), borderwidth=2, relief="sunken")
         self.input_box.pack(pady=40, side="bottom")
-        # self.input_text = Entry(self.root, width=50)
-        # self.input_text.pack()
-        # self.input_text.place(x=WINDOW_WIDTH/2-100, y=WINDOW_HEIGHT/2-100)
+        # self.input_box.place(x=WINDOW_WIDTH/2-100, y=WINDOW_HEIGHT/2-100)
+
+        # Add the send button
+        # self.send_button = tk.Button(self.root, text="Send", font=("Arial", 12), borderwidth=2, relief="raised")
+        # self.send_button.pack(pady=40, side="bottom")
 
         self.root.resizable(width=False, height=False)
 
@@ -60,5 +62,4 @@ class Interface:
 
 
 if __name__ == '__main__':
-    interface = Interface(512, 1024)
-
+    interface = Interface(512, 1024, "Very Safe Messaging App")
