@@ -55,11 +55,8 @@ class Interface:
         send_icon = ImageTk.PhotoImage(Image.open("send_icon.png").resize((self.button_size, self.button_size),
                                                                           Image.BOX))  # I didn't put self.
         self.send_button = tk.Button(self.root, height=self.button_size, width=self.button_size, text='Click Me !',
-                                     image=send_icon, border="0").place(x=int(self.screen_width - self.button_size),
-                                                            y=int(self.screen_height - self.button_size))
-        # self.send_button.place(x=(self.screen_width-self.button_size), y=(self.screen_height-self.button_size))
-
-        # self.send_button
+                                     image=send_icon, border="0")
+        self.send_button.place(x=int(self.screen_width - self.button_size), y=int(self.screen_height - self.button_size))
 
         self.root.resizable(width=False, height=False)
 
