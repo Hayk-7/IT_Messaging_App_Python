@@ -19,18 +19,16 @@ class Interface:
         self.screen_width = WINDOW_WIDTH
         self.screen_height = WINDOW_HEIGHT
 
-        self.input_box_height = 10
+        self.input_box_height = 40
 
         self.title = TITLE
 
         # Create the main application window
         self.root = Tk()
 
-        # Set window size
-        self.root.geometry(f"{self.screen_width}x{self.screen_height}")
-
-        # Open the window in the center of the screen
-        self.root.geometry("+{}+{}".format(int(self.root.winfo_screenwidth() / 2 - self.screen_width / 2), 0))
+        # Set window size and Open the window in the center of the screen
+        self.root.geometry(
+            f"{self.screen_width}x{self.screen_height}+{int(self.root.winfo_screenwidth() / 2 - self.screen_width / 2)}+{0}")  # !!! + THAN 80 CHR.
 
         # Set window title and icon
         self.root.title(self.title)
@@ -46,21 +44,19 @@ class Interface:
         # Add the input box
         self.input_box = tk.Entry(self.root, width=self.screen_width, bg="white", fg="black",
                                   font=("Comic Sans MS", 12), borderwidth=2, relief="sunken")
-        # self.input_box.place(x=472, y=974)
-        # self.input_box.place(x=(self.screen_width//2), y=self.screen_height, height=0,
-        #                      width=self.screen_width - 400)
-        # print(self.input_box.place_info(), 'Here')
+        self.input_box.place(x=(self.screen_width // 2), y=self.screen_height, height=100,
+                             width=self.screen_width - 400)
 
-        self.input_box.pack(pady=20, side="bottom")
-        # self.input_box.place(x=WINDOW_WIDTH/2-100, y=WINDOW_HEIGHT/2-100)
+        self.input_box.place(x=0, y=self.root.winfo_height() - self.input_box_height,
+                             height=self.input_box_height, width=self.root.winfo_width())
 
         # Add the send button and display it
         self.button_size = self.input_box_height
         send_icon = ImageTk.PhotoImage(Image.open("send_icon.png").resize((self.button_size, self.button_size),
                                                                           Image.BOX))  # I didn't put self.
-        self.send_button = tk.Button(self.root, height=self.button_size * 2, width=self.button_size * 2,
-                                     text='Click Me !', image=send_icon)
-        self.send_button.place(x=472, y=974)
+        self.send_button = tk.Button(self.root, height=self.button_size, width=self.button_size, text='Click Me !',
+                                     image=send_icon, border="0").place(x=int(self.screen_width - self.button_size),
+                                                            y=int(self.screen_height - self.button_size))
         # self.send_button.place(x=(self.screen_width-self.button_size), y=(self.screen_height-self.button_size))
 
         # self.send_button
@@ -80,4 +76,4 @@ class Interface:
 
 
 if __name__ == '__main__':
-    interface = Interface(512, 1024, "Very Safe Messaging App!")
+    interface = Interface(480, 920, "Very Safe Messaging App!")
