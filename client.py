@@ -14,3 +14,6 @@ while True:
     # Print the data received from the server (Data is sent under the form of bytes, so we need to decode it (using
     # utf-8))
     print(msg.decode("utf-8"))
+    while True:
+        wait = input("Press enter to continue")
+        s.send(bytes("Im here b", "utf-8"))
