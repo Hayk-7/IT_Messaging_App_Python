@@ -20,28 +20,50 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Bind the socket to the port 6969
 server.bind(ADDR)
 
+client_list = []
+
+
+def send(msg, conn):
+    # Encode the message
+    message = msg.encode(FORMAT)
+    # Get the length of the message
+    msg_length = len(message)
+    # Encode the length of the message
+    send_length = str(msg_length).encode(FORMAT)
+    # Add spaces to the length of the message to make it 64 characters long
+    send_length += b' ' * (HEADER - len(send_length))
+    # Send the length of the message
+    conn.send(send_length)
+    # Send the message
+    conn.send(message)
+
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
     connected = True
+    client_list.append(conn)
     # Send data to the client (Data is sent under the form of bytes, so we need to encode it (using utf-8))
     conn.send(bytes(f"Connected to the server {ADDR}", FORMAT))
     while connected:
         # Receive length of the message from the client
-        msg_length = int(conn.recv(HEADER).decode(FORMAT))
-
-        if msg_length:
+        msg_length = conn.recv(HEADER).decode(FORMAT)
+        if int(msg_length):
             # Receive data from the client
-            msg = conn.recv(msg_length).decode(FORMAT)
+            msg = conn.recv(int(msg_length)).decode(FORMAT)
             # If the client sends the DISCONNECT_MESSAGE, disconnect the client
             if msg == DISCONNECT_MESSAGE:
                 connected = False
 
             print(f"[{addr}] {msg}")
             # Inform the client that the message was received
-            conn.send(bytes("Message received", FORMAT))
+            # conn.send(bytes("Message received", FORMAT))
 
+            # Send the message to all the clients
+            for client in client_list:
+                send(f"[{addr}] {msg}", client)
+    # When out of while loop disconnect client
     print(f"[DISCONNECTED] {addr} disconnected.")
+    client_list.remove(conn)
     conn.close()
 
 
