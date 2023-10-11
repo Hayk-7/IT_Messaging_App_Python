@@ -4,7 +4,7 @@ import time
 
 # HEADER = Information about the message to be received (in this case, the length of the message)
 HEADER = 64
-# FORMAT = The format (encryption) of the message to be received
+# FORMAT = The format (encryption) of the messages
 FORMAT = "utf-8"
 DEFAULT_PORT = 6969
 DISCONNECT_MESSAGE = "/dc"
@@ -14,29 +14,23 @@ DISCONNECT_MESSAGE = "/dc"
 
 # Scan local network for open port DEFAULT_PORT
 def findServer():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(("0.0.0.0", DEFAULT_PORT))
-    hostname = socket.gethostname()
-    ip = socket.gethostbyname(hostname)
-    sock.close()
-    return ip
-    # s = time.time()
-    # for x1 in range(134, 136):
-    #     for x2 in range(100):
-    #         for x3 in range(100):
-    #             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #             sock.settimeout(0.0001)
-    #             print(f"Trying: 10.{x1}.{x2}.{x3}:{DEFAULT_PORT}")
-    #             result = sock.connect_ex((f"10.{x1}.{x2}.{x3}", DEFAULT_PORT))
-    #             if result == 0:
-    #                 e = time.time()
-    #                 print(f"Found: 10.{x1}.{x2}.{x3} in {e-s}")
-    #                 return f"10.{x1}.{x2}.{x3}"
-    #             sock.close()
+    s = time.time()
+    for x1 in range(134, 136):
+        for x2 in range(100):
+            for x3 in range(100):
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(0.0001)
+                print(f"Trying: 10.{x1}.{x2}.{x3}:{DEFAULT_PORT}")
+                result = sock.connect_ex((f"10.{x1}.{x2}.{x3}", DEFAULT_PORT))
+                if result == 0:
+                    e = time.time()
+                    print(f"Found: 10.{x1}.{x2}.{x3} in {e-s}")
+                    sock.close()
+                    return f"10.{x1}.{x2}.{x3}"
 
 
 SERVER = findServer()
-
+# SERVER = "10.134.54.99"
 # TESTING ---------------------------------------
 
 # Socket = endpoint that receives data
@@ -44,6 +38,7 @@ SERVER = findServer()
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Connect the socket to the port 6969
 client.connect((SERVER, DEFAULT_PORT))
+client.send(bytes("PERMANENT", FORMAT))
 connected = True
 
 

@@ -39,6 +39,9 @@ def send(msg, conn):
 
 
 def handle_client(conn, addr):
+    if conn.recv(HEADER).decode(FORMAT) != "PERMANENT":
+        conn.close()
+        return
     print(f"[NEW CONNECTION] {addr} connected.")
     connected = True
     client_list.append(conn)
