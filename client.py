@@ -10,10 +10,8 @@ DEFAULT_PORT = 6969
 DISCONNECT_MESSAGE = "/dc"
 
 
-# TESTING ---------------------------------------
-
 # Scan local network for open port DEFAULT_PORT
-def findServer():
+def findServerSchool():
     s = time.time()
     for x1 in range(134, 136):
         for x2 in range(100):
@@ -24,14 +22,32 @@ def findServer():
                 result = sock.connect_ex((f"10.{x1}.{x2}.{x3}", DEFAULT_PORT))
                 if result == 0:
                     e = time.time()
-                    print(f"Found: 10.{x1}.{x2}.{x3} in {e-s}")
+                    print(f"Found: 10.{x1}.{x2}.{x3} in {e-s}s")
                     sock.close()
                     return f"10.{x1}.{x2}.{x3}"
+    sock.close()
+    print("No server found")
 
 
-SERVER = findServer()
+def findServerHome():
+    s = time.time()
+    for x1 in range(168, 169):
+        for x2 in range(100):
+            for x3 in range(100):
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(0.0001)
+                print(f"Trying: 192.{x1}.{x2}.{x3}:{DEFAULT_PORT}")
+                result = sock.connect_ex((f"192.{x1}.{x2}.{x3}", DEFAULT_PORT))
+                if result == 0:
+                    e = time.time()
+                    print(f"Found: 192.{x1}.{x2}.{x3} in {e - s}s")
+                    sock.close()
+                    return f"192.{x1}.{x2}.{x3}"
+    sock.close()
+    print("No server found")
+
+SERVER = findServerHome()
 # SERVER = "10.134.54.99"
-# TESTING ---------------------------------------
 
 # Socket = endpoint that receives data
 # Create a socket object (AF_INET = IPv4, SOCK_STREAM = TCP)
@@ -40,7 +56,6 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((SERVER, DEFAULT_PORT))
 client.send(bytes("PERMANENT", FORMAT))
 connected = True
-
 
 def send(msg):
     # Encode the message
@@ -74,6 +89,8 @@ def receive():
 msg = client.recv(128)
 print(msg.decode(FORMAT))
 
+# Send login to the server
+client.send(bytes(input("Login: "), FORMAT))
 
 def listen():
     global connected

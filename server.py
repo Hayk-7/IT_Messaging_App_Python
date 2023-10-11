@@ -1,6 +1,7 @@
 import socket
 import threading
 
+
 # HEADER = Information about the message to be received (in this case, the length of the message)
 HEADER = 64
 # FORMAT = The format (encryption) of the message to be received
@@ -20,7 +21,7 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Bind the socket to the port 6969
 server.bind(ADDR)
 
-client_list = []
+client_list = {}
 
 
 def send(msg, conn):
@@ -39,14 +40,21 @@ def send(msg, conn):
 
 
 def handle_client(conn, addr):
+    # Check if the client is permanent (not just a connection test)
     if conn.recv(HEADER).decode(FORMAT) != "PERMANENT":
         conn.close()
         return
     print(f"[NEW CONNECTION] {addr} connected.")
     connected = True
-    client_list.append(conn)
+
     # Send data to the client (Data is sent under the form of bytes, so we need to encode it (using utf-8))
     conn.send(bytes(f"Connected to the server {ADDR}", FORMAT))
+
+    # Get the client's login
+    login = conn.recv(128).decode(FORMAT)
+    # Add the client to the list of clients
+    client_list[conn] = login
+
     while connected:
         # Receive length of the message from the client
         msg_length = conn.recv(HEADER).decode(FORMAT)
@@ -57,13 +65,13 @@ def handle_client(conn, addr):
             if msg == DISCONNECT_MESSAGE:
                 connected = False
 
-            print(f"[{addr}] {msg}")
+            print(f"[{login}] {msg}")
             # Inform the client that the message was received
             # conn.send(bytes("Message received", FORMAT))
 
             # Send the message to all the clients
-            for client in client_list:
-                send(f"[{addr}] {msg}", client)
+            for client in client_list.keys():
+                send(f"[{login}] {msg}", client)
     # When out of while loop disconnect client
     print(f"[DISCONNECTED] {addr} disconnected.")
     client_list.remove(conn)
@@ -84,5 +92,3 @@ def start():
 
 print("[STARTING] Server is starting...")
 start()
-
-
