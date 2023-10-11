@@ -1,5 +1,6 @@
 import socket
 import threading
+import time
 
 # HEADER = Information about the message to be received (in this case, the length of the message)
 HEADER = 64
@@ -7,9 +8,36 @@ HEADER = 64
 FORMAT = "utf-8"
 DEFAULT_PORT = 6969
 DISCONNECT_MESSAGE = "/dc"
-# Change the ip address to the server ip address
-# TODO: Automatically get the ip address of the server
-SERVER = "192.168.1.1"
+
+
+# TESTING ---------------------------------------
+
+# Scan local network for open port DEFAULT_PORT
+def findServer():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(("0.0.0.0", DEFAULT_PORT))
+    hostname = socket.gethostname()
+    ip = socket.gethostbyname(hostname)
+    sock.close()
+    return ip
+    # s = time.time()
+    # for x1 in range(134, 136):
+    #     for x2 in range(100):
+    #         for x3 in range(100):
+    #             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #             sock.settimeout(0.0001)
+    #             print(f"Trying: 10.{x1}.{x2}.{x3}:{DEFAULT_PORT}")
+    #             result = sock.connect_ex((f"10.{x1}.{x2}.{x3}", DEFAULT_PORT))
+    #             if result == 0:
+    #                 e = time.time()
+    #                 print(f"Found: 10.{x1}.{x2}.{x3} in {e-s}")
+    #                 return f"10.{x1}.{x2}.{x3}"
+    #             sock.close()
+
+
+SERVER = findServer()
+
+# TESTING ---------------------------------------
 
 # Socket = endpoint that receives data
 # Create a socket object (AF_INET = IPv4, SOCK_STREAM = TCP)
@@ -61,7 +89,7 @@ def listen():
 def Send():
     global connected
     while connected:
-        message = input("Enter message: ")
+        message = input()
         if message == DISCONNECT_MESSAGE:
             connected = False
         send(message)
@@ -72,4 +100,3 @@ sender = threading.Thread(target=Send)
 sender.start()
 listener = threading.Thread(target=listen)
 listener.start()
-

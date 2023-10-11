@@ -47,7 +47,7 @@ def handle_client(conn, addr):
     while connected:
         # Receive length of the message from the client
         msg_length = conn.recv(HEADER).decode(FORMAT)
-        if int(msg_length):
+        if msg_length:
             # Receive data from the client
             msg = conn.recv(int(msg_length)).decode(FORMAT)
             # If the client sends the DISCONNECT_MESSAGE, disconnect the client
