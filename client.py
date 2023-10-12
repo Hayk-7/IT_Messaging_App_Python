@@ -46,6 +46,7 @@ def findServerHome():
     sock.close()
     print("No server found")
 
+
 SERVER = findServerHome()
 # SERVER = "10.134.54.99"
 
@@ -90,7 +91,9 @@ msg = client.recv(128)
 print(msg.decode(FORMAT))
 
 # Send login to the server
-client.send(bytes(input("Login: "), FORMAT))
+login = input("Login: ")
+client.send(bytes(login, FORMAT))
+
 
 def listen():
     global connected

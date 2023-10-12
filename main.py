@@ -8,6 +8,7 @@ import tkinter as tk
 from tkinter import ttk, Tk, Entry, Scrollbar
 import sys
 from PIL import Image, ImageTk
+import client
 
 
 # !!! Work with CANVAS
@@ -104,14 +105,15 @@ class Interface:
 
     # Take the input and move everything up
     def envoyer_texte(self):
-        """"
+        """
         Sends the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
         """
         self.input_text = self.input_box.get()  # Get input
+        client.send(self.input_text)
         # print(self.input_text)
         if self.input_text.replace(" ", ""):
-            self.messages.append((self.input_text, 0))
+            self.messages.append((self.input_text, client.login))
             print(self.messages)
             self.display_messages()
         self.input_box.delete("0", tk.END)  # Clear input
