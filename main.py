@@ -64,7 +64,7 @@ class Interface:
 
         # Create a frame for the chat messages
         self.chat_frame = tk.Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.chat_frame, anchor=tk.NW)
+        self.canvas.create_window((0, 0), window=self.chat_frame, anchor=tk.NW, width=self.screen_width,height=self.screen_height - self.input_box_height)
 
         # Add the input box
         shift = self.input_box_height
@@ -120,9 +120,12 @@ class Interface:
         for i, (message, who) in enumerate(self.messages):
             print(i, message, who)
             color = "lightgreen"
-            message_frame = tk.Frame(self.chat_frame, padx=5, pady=5, bg=color, bd=2, relief=tk.RAISED)
+            self.chat_frame.image = self.background_image
+            # put box in which there will be text message label
+            message_frame = tk.Frame(self.chat_frame, padx=5, pady=5, bg=color, bd=2, relief=tk.GROOVE)
+
+            message_frame.grid(row=i, column=1, sticky=tk.W, padx=10, pady=5)
             message_frame.image = self.background_image
-            message_frame.grid(row=i, column=1, sticky=tk.E, padx=10, pady=5)
             message_label = tk.Label(message_frame, text=message, wraplength=self.screen_width, justify=tk.RIGHT,
                                      bg=color)
             message_label.pack(anchor=tk.SE)
