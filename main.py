@@ -110,10 +110,10 @@ class Interface:
         Doesn't send the input text if it's empty.
         """
         self.input_text = self.input_box.get()  # Get input
-        client.send(self.input_text)
+        localClient.send(self.input_text)
         # print(self.input_text)
         if self.input_text.replace(" ", ""):
-            self.messages.append((self.input_text, client.login))
+            self.messages.append((self.input_text, localClient.login))
             print(self.messages)
             self.display_messages()
         self.input_box.delete("0", tk.END)  # Clear input
@@ -128,7 +128,7 @@ class Interface:
 
             message_frame.grid(row=i, column=1, sticky=tk.W, padx=10, pady=5)
             message_frame.image = self.background_image
-            message_label = tk.Label(message_frame, text=message, wraplength=self.screen_width, justify=tk.RIGHT,
+            message_label = tk.Label(message_frame, text=f"{who}: {message}", wraplength=self.screen_width, justify=tk.RIGHT,
                                      bg=color)
             message_label.pack(anchor=tk.SE)
 
@@ -137,11 +137,14 @@ class Interface:
 
 
 if __name__ == '__main__':
+    localClient = client.Client()
     try:
-        interface = Interface(480, 920, "Very Safe Messaging App!")
+        interface = Interface(480, 920, f"Whatsdown!: {localClient.login}")
     except Exception as e:
-        print(f"{e} [EXCEPTION] occured")
+        print(f"[EXCEPTION] {e} occured")
         sys.exit()
+
+
 
 # def create_rounded_frame(canvas, x, y, width, height, corner_radius, fill_color):
 #     canvas.create_arc(x, y, x + 2*corner_radius, y + 2*corner_radius, start=90, extent=90, fill=fill_color)
