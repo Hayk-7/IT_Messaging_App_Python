@@ -11,7 +11,16 @@ class Client:
         self.FORMAT = "utf-8"
         self.DEFAULT_PORT = 6969
         self.DISCONNECT_MESSAGE = "/dc"
-        self.SERVER = self.findServerHome()
+        self.SERVER = None
+
+        self.listener = None
+        self.sender = None
+        self.login = None
+        self.connected = None
+        self.client = None
+
+    def connect(self):
+        self.SERVER = self.findServerHotspot()
 
         # Socket = endpoint that receives data
         # Create a socket object (AF_INET = IPv4, SOCK_STREAM = TCP)
@@ -71,6 +80,23 @@ class Client:
         sock.close()
         print("No server found")
 
+    def findServerHotspot(self):
+        s = time.time()
+        for x1 in range(10, 11):
+            for x2 in range(22, 23):
+                for x3 in range(94, 95):
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.settimeout(0.0001)
+                    print(f"Trying: 26.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
+                    result = sock.connect_ex((f"26.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
+                    if result == 0:
+                        e = time.time()
+                        print(f"Found: 26.{x1}.{x2}.{x3} in {e - s}s")
+                        sock.close()
+                        return f"26.{x1}.{x2}.{x3}"
+        sock.close()
+        print("No server found")
+
     def send(self, msg):
         # Encode the message
         message = msg.encode(self.FORMAT)
@@ -105,5 +131,5 @@ class Client:
         while self.connected:
             message = input()
             if message == self.DISCONNECT_MESSAGE:
-                connected = False
+                self.connected = False
             self.send(message)

@@ -117,9 +117,10 @@ class Interface:
 
 if __name__ == '__main__':
     localClient = client.Client()
+    localClient.connect()
     try:
         print("init")
-        interface = Interface(480, 920, f"Whatsdown! Logged in as: {localClient.login}")
+        interface = Interface(480, 700, f"Whatsdown! Logged in as: {localClient.login}")
     except Exception as e:
         print(f"[EXCEPTION] {e} occurred")
         sys.exit()
