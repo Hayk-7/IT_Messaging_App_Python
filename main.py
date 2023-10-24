@@ -83,7 +83,16 @@ class Interface:
 
         self.root.resizable(width=False, height=False)
 
+        self.checkNewMessage()
+
         self.root.mainloop()
+
+    def checkNewMessage(self):
+        if localClient.newMessage:
+            self.display_messages()
+            localClient.newMessage = False
+        self.root.after(100, self.checkNewMessage)
+
 
     # Take the input and move everything up
     def envoyer_texte(self):
@@ -92,26 +101,34 @@ class Interface:
         Doesn't send the input text if it's empty.
         """
         self.input_text = self.input_box.get()  # Get input
+        if self.input_text == "" or self.input_text == " ":
+            return
         localClient.send(self.input_text)
-        # print(self.input_text)
-        if self.input_text.replace(" ", ""):
-            self.messages.append((self.input_text, localClient.login))
-            print(self.messages)
-            self.display_messages()
+
         self.input_box.delete("0", tk.END)  # Clear input from beginning to end
 
     def display_messages(self):
         # for i, (message, who) in enumerate(self.messages):
-        message, who = self.messages[-1]
-        color = "lightgreen"
+        self.messages = localClient.message_list
+        who, message = self.messages[-1]
+        colorMe = "lightgreen"
+        colorOther = "lightblue"
         text_color = "black"
 
-        # put box in which there will be text message label
-        message_frame = tk.Frame(self.canvas, bg=color) #, relief=tk.GROOVE)
-        message_frame.pack(padx=5, pady=5, anchor=tk.NW)
+        if who == localClient.login:
+            # put box in which there will be text message label
+            message_frame = tk.Frame(self.canvas, bg=colorMe) #, relief=tk.GROOVE)
+            message_frame.pack(padx=5, pady=5, anchor=tk.NW)
 
-        message_label = tk.Label(message_frame, text=f"{who}: {message}", wraplength=self.screen_width//2, justify=tk.LEFT,
-                                 bg=color, fg=text_color)
+            message_label = tk.Label(message_frame, text=f"{who}: {message}", wraplength=self.screen_width//2, justify=tk.LEFT,
+                                     bg=colorMe, fg=text_color)
+        else:
+            message_frame = tk.Frame(self.canvas, bg=colorOther)  # , relief=tk.GROOVE)
+            message_frame.pack(padx=5, pady=5, anchor=tk.NW)
+
+            message_label = tk.Label(message_frame, text=f"{who}: {message}", wraplength=self.screen_width // 2,
+                                     justify=tk.LEFT,
+                                     bg=colorOther, fg=text_color)
         message_label.pack(padx=5, pady=5)
 
 
