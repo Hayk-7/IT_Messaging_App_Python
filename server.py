@@ -111,6 +111,7 @@ def handle_client(conn, addr):
         message_list = loadMessageList(users)
         if message_list:
             for conn in client_list.keys():
+                sendMessage("LoadChatFile", conn)
                 sendMessageList(message_list, conn)
 
     while True:
@@ -124,7 +125,7 @@ def handle_client(conn, addr):
                 break
             # Add the message to the list of messages
             message_list.append([login, msg])
-            # If there are more than 1 clients, save the messages in a file
+            # If there are more than 1 client, save the messages in a file
             if len(client_list) > 1:
                 saveMessageList(message_list)
             # Send the message to all the clients

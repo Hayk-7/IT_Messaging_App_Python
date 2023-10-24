@@ -21,6 +21,7 @@ class Client:
 
         self.message_list = []
         self.newMessage = False
+        self.loadChatFile = False
 
     def connect(self):
         self.SERVER = self.findServerHome()
@@ -120,7 +121,8 @@ class Client:
             if msg_length:
                 # Receive data from the server
                 msg = self.client.recv(msg_length).decode(self.FORMAT)
-                print(msg)
+                if msg == "LoadChatFile":
+                    self.loadChatFile = True
         elif msg_type == 1:
             # Empty the message list
             self.message_list = []
@@ -144,6 +146,7 @@ class Client:
                 msg = self.client.recv(msg_length).decode(self.FORMAT)
                 # Add the login and message to the message list
                 self.message_list.append((login, msg))
+
             # Set newMessage to True so that the interface can display the messages
             self.newMessage = True
 

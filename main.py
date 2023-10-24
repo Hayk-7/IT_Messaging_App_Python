@@ -22,6 +22,9 @@ class Interface:
         self.background_label = None
         self.background_image = None
         self.background_photo = None
+        self.colorMe = "lightgreen"
+        self.colorOther = "lightblue"
+        self.text_color = "black"
 
         # Set window width and height
         self.screen_width = WINDOW_WIDTH
@@ -88,11 +91,18 @@ class Interface:
         self.root.mainloop()
 
     def checkNewMessage(self):
+        # Check if the chat file was found and loaded
+        if localClient.loadChatFile and localClient.newMessage:
+            self.display_messageList()
+            localClient.loadChatFile = False
+            localClient.newMessage = False
+
         # Check if there are new messages
         if localClient.newMessage:
             # Display the messages
-            self.display_messages()
+            self.display_message(localClient.message_list[-1])
             localClient.newMessage = False
+
         # Check again in 100ms
         self.root.after(100, self.checkNewMessage)
 
@@ -109,32 +119,36 @@ class Interface:
 
         self.input_box.delete("0", tk.END)  # Clear input from beginning to end
 
-    def display_messages(self):
+    def display_message(self, message):
         # for i, (message, who) in enumerate(self.messages):
         # Get the messages from the server
-        self.messages = localClient.message_list
-        who, message = self.messages[-1]
-        colorMe = "lightgreen"
-        colorOther = "lightblue"
-        text_color = "black"
+        # self.messages = localClient.message_list
+        who, msg = message
 
         # Check if the message is from the local client
         if who == localClient.login:
             # put box in which there will be text message label
-            message_frame = tk.Frame(self.canvas, bg=colorMe) #, relief=tk.GROOVE)
+            message_frame = tk.Frame(self.canvas, bg=self.colorMe) #, relief=tk.GROOVE)
             message_frame.pack(padx=5, pady=5, anchor=tk.NW)
 
-            message_label = tk.Label(message_frame, text=f"{who}: {message}", wraplength=self.screen_width//2, justify=tk.LEFT,
-                                     bg=colorMe, fg=text_color)
+            message_label = tk.Label(message_frame, text=f"{who}: {msg}", wraplength=self.screen_width//2, justify=tk.LEFT,
+                                     bg=self.colorMe, fg=self.text_color)
         # If the message is from another client
         else:
-            message_frame = tk.Frame(self.canvas, bg=colorOther)  # , relief=tk.GROOVE)
+            message_frame = tk.Frame(self.canvas, bg=self.colorOther)  # , relief=tk.GROOVE)
             message_frame.pack(padx=5, pady=5, anchor=tk.NW)
 
-            message_label = tk.Label(message_frame, text=f"{who}: {message}", wraplength=self.screen_width // 2,
+            message_label = tk.Label(message_frame, text=f"{who}: {msg}", wraplength=self.screen_width // 2,
                                      justify=tk.LEFT,
-                                     bg=colorOther, fg=text_color)
+                                     bg=self.colorOther, fg=self.text_color)
         message_label.pack(padx=5, pady=5)
+
+    def display_messageList(self):
+        # Get the messages from the server
+        messages = localClient.message_list
+        # Display the messages
+        for message in messages:
+            self.display_message(message)
 
 
 if __name__ == '__main__':
