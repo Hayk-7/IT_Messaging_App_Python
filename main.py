@@ -113,6 +113,10 @@ class Interface:
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
+        self.checkNewMessage()
+
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+
         self.root.mainloop()
 
     def on_close(self):
@@ -139,6 +143,30 @@ class Interface:
         #
         # # Check again in 100ms
         # self.root.after(100, self.checkNewMessage)
+
+    def on_close(self):
+        localClient.send(localClient.DISCONNECT_MESSAGE)
+        self.root.destroy()
+        quit()
+
+    def scroll(self):
+        self.canvas.yview_moveto(1)
+
+    def checkNewMessage(self):
+        # Check if the chat file was found and loaded
+        if localClient.loadChatFile and localClient.newMessage:
+            self.display_messageList()
+            localClient.loadChatFile = False
+            localClient.newMessage = False
+
+        # Check if there are new messages
+        if localClient.newMessage:
+            # Display the messages
+            self.display_message(localClient.message_list[-1])
+            localClient.newMessage = False
+
+        # Check again in 100ms
+        self.root.after(100, self.checkNewMessage)
 
     # Take the input and move everything up
     def ajouter_message(self):
