@@ -64,16 +64,21 @@ def sendMessageList(msg_list, conn):
 
 
 def saveMessageList(msg_list):
+    # Get the users in the conversation
     users = [login for login in client_list.values()]
+    # Sort the users alphabetically
     users.sort()
+    # Save the messages in a file, with the name of the file being the users in the conversation for easy access
     with open(f"{'-'.join(users)}.txt", "w") as f:
         for login, msg in msg_list:
             f.write(f"{login}:{msg}\n")
 
 
 def loadMessageList(users):
+    # Check if the file exists
     if not os.path.isfile(f"{'-'.join(users)}.txt"):
         return []
+    # Load the messages from the file
     with open(f"{'-'.join(users)}.txt", "r") as f:
         msg_list = []
         for line in f.readlines():
@@ -99,6 +104,7 @@ def handle_client(conn, addr):
     # Add the client to the list of clients
     client_list[conn] = login
 
+    # When the 2nd user connects to the server, load the messages from the file
     if len(client_list) > 1:
         users = [login for login in client_list.values()]
         users.sort()
@@ -116,8 +122,9 @@ def handle_client(conn, addr):
             # If the client sends the DISCONNECT_MESSAGE, disconnect the client
             if msg == DISCONNECT_MESSAGE:
                 break
-
+            # Add the message to the list of messages
             message_list.append([login, msg])
+            # If there are more than 1 clients, save the messages in a file
             if len(client_list) > 1:
                 saveMessageList(message_list)
             # Send the message to all the clients

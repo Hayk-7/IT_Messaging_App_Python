@@ -122,18 +122,29 @@ class Client:
                 msg = self.client.recv(msg_length).decode(self.FORMAT)
                 print(msg)
         elif msg_type == 1:
+            # Empty the message list
             self.message_list = []
+            # Get the length of the list
             list_length = int(self.client.recv(self.HEADERLEN).decode(self.FORMAT))
+            # Loop through the list
             for message in range(list_length):
+                # Verify that the login is of type message (0)
                 if self.client.recv(1).decode(self.FORMAT) != "0":
                     return
+                # Get the length of the login
                 login_length = int(self.client.recv(self.HEADERLEN).decode(self.FORMAT))
+                # Get the login
                 login = self.client.recv(login_length).decode(self.FORMAT)
+                # Verify that the message is of type message (0)
                 if self.client.recv(1).decode(self.FORMAT) != "0":
                     return
+                # Get the length of the message
                 msg_length = int(self.client.recv(self.HEADERLEN).decode(self.FORMAT))
+                # Get the message
                 msg = self.client.recv(msg_length).decode(self.FORMAT)
+                # Add the login and message to the message list
                 self.message_list.append((login, msg))
+            # Set newMessage to True so that the interface can display the messages
             self.newMessage = True
 
     def listen(self):

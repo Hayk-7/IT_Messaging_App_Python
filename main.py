@@ -88,11 +88,13 @@ class Interface:
         self.root.mainloop()
 
     def checkNewMessage(self):
+        # Check if there are new messages
         if localClient.newMessage:
+            # Display the messages
             self.display_messages()
             localClient.newMessage = False
+        # Check again in 100ms
         self.root.after(100, self.checkNewMessage)
-
 
     # Take the input and move everything up
     def envoyer_texte(self):
@@ -109,12 +111,14 @@ class Interface:
 
     def display_messages(self):
         # for i, (message, who) in enumerate(self.messages):
+        # Get the messages from the server
         self.messages = localClient.message_list
         who, message = self.messages[-1]
         colorMe = "lightgreen"
         colorOther = "lightblue"
         text_color = "black"
 
+        # Check if the message is from the local client
         if who == localClient.login:
             # put box in which there will be text message label
             message_frame = tk.Frame(self.canvas, bg=colorMe) #, relief=tk.GROOVE)
@@ -122,6 +126,7 @@ class Interface:
 
             message_label = tk.Label(message_frame, text=f"{who}: {message}", wraplength=self.screen_width//2, justify=tk.LEFT,
                                      bg=colorMe, fg=text_color)
+        # If the message is from another client
         else:
             message_frame = tk.Frame(self.canvas, bg=colorOther)  # , relief=tk.GROOVE)
             message_frame.pack(padx=5, pady=5, anchor=tk.NW)
@@ -133,7 +138,9 @@ class Interface:
 
 
 if __name__ == '__main__':
+    # Create a client
     localClient = client.Client()
+    # Connect the client to the server
     localClient.connect()
     try:
         print("init")
