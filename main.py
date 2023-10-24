@@ -107,7 +107,7 @@ class Interface:
 
         self.messages = []
 
-        self.root.resizable(width=False, height=False)
+        # self.root.resizable(width=False, height=False)
 
         self.checkNewMessage()
 
@@ -124,20 +124,21 @@ class Interface:
         self.canvas.yview_moveto(1)
 
     def checkNewMessage(self):
+        pass
         # Check if the chat file was found and loaded
-        if localClient.loadChatFile and localClient.newMessage:
-            self.display_messageList()
-            localClient.loadChatFile = False
-            localClient.newMessage = False
-
-        # Check if there are new messages
-        if localClient.newMessage:
-            # Display the messages
-            self.display_message(localClient.message_list[-1])
-            localClient.newMessage = False
-
-        # Check again in 100ms
-        self.root.after(100, self.checkNewMessage)
+        # if localClient.loadChatFile and localClient.newMessage:
+        #     self.display_messageList()
+        #     localClient.loadChatFile = False
+        #     localClient.newMessage = False
+        #
+        # # Check if there are new messages
+        # if localClient.newMessage:
+        #     # Display the messages
+        #     self.display_message(localClient.message_list[-1])
+        #     localClient.newMessage = False
+        #
+        # # Check again in 100ms
+        # self.root.after(100, self.checkNewMessage)
 
     # Take the input and move everything up
     def ajouter_message(self):
@@ -167,9 +168,9 @@ class Interface:
         sender.grid(column=0, row=0, sticky="w")
         if who==localClient.login:
             ###!!! Y A ENCORE A REFORMATER LE HEIGHT POUR ADAPTER A LA TAILLE DU TEXTE
-            message_text = tk.Text(frame, wrap=tk.WORD, width=self.screen_width, height=1, bg=self.colorMe)
+            message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width/8.3), height=1, bg=self.colorMe)
         else:
-            message_text = tk.Text(frame, wrap=tk.WORD, width=self.screen_width, height=1, bg=self.colorOther)
+            message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width/8.3), height=1, bg=self.colorOther)
         message_text.insert(tk.END, f"{message}")
         message_text.config(state=tk.DISABLED)  # A comprendre?
         message_text.grid(column=0, row=1, sticky="w")

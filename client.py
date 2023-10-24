@@ -20,7 +20,7 @@ class Client:
         self.client = None
 
     def connect(self):
-        self.SERVER = self.findServerHotspot()
+        self.SERVER = self.findServerHome()
 
         # Socket = endpoint that receives data
         # Create a socket object (AF_INET = IPv4, SOCK_STREAM = TCP)
@@ -65,18 +65,18 @@ class Client:
 
     def findServerHome(self):
         s = time.time()
-        for x1 in range(168, 169):
-            for x2 in range(100):
+        for x1 in range(30, 169):
+            for x2 in range(32,33):
                 for x3 in range(100):
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     sock.settimeout(0.0001)
-                    print(f"Trying: 192.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
-                    result = sock.connect_ex((f"192.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
+                    print(f"Trying: 172.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
+                    result = sock.connect_ex((f"172.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
                     if result == 0:
                         e = time.time()
-                        print(f"Found: 192.{x1}.{x2}.{x3} in {e - s}s")
+                        print(f"Found: 172.{x1}.{x2}.{x3} in {e - s}s")
                         sock.close()
-                        return f"192.{x1}.{x2}.{x3}"
+                        return f"172.{x1}.{x2}.{x3}"
         sock.close()
         print("No server found")
 
