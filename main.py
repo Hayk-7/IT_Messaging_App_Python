@@ -88,7 +88,14 @@ class Interface:
 
         self.checkNewMessage()
 
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+
         self.root.mainloop()
+
+    def on_close(self):
+        localClient.send(localClient.DISCONNECT_MESSAGE)
+        self.root.destroy()
+        quit()
 
     def checkNewMessage(self):
         # Check if the chat file was found and loaded
@@ -116,7 +123,8 @@ class Interface:
         if self.input_text == "" or self.input_text == " ":
             return
         localClient.send(self.input_text)
-
+        if self.input_text == localClient.DISCONNECT_MESSAGE:
+            self.on_close()
         self.input_box.delete("0", tk.END)  # Clear input from beginning to end
 
     def display_message(self, message):
