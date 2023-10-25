@@ -3,6 +3,8 @@ from tkinter import ttk, Tk, Scrollbar
 from PIL import Image, ImageTk
 from datetime import datetime # On peut ajouter l'heure de l'envoi du message
 
+import interface
+
 
 # !!! Work with CANVAS
 class Interface:

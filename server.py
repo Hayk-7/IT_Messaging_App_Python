@@ -13,11 +13,9 @@ FORMAT = "utf-8"
 DISCONNECT_MESSAGE = "/dc"
 DEFAULT_PORT = 6969
 
-
 # Get the IP address of the server
 SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, DEFAULT_PORT)
-
 
 # Socket = endpoint that receives data
 # Create a socket object (AF_INET = IPv4, SOCK_STREAM = TCP)
@@ -104,6 +102,8 @@ def handle_client(conn, addr):
     # Add the client to the list of clients
     client_list[conn] = login
 
+    print(f"[ACTIVE CONNECTIONS] {len(client_list)}")
+
     # When the 2nd user connects to the server, load the messages from the file
     if len(client_list) > 1:
         users = [login for login in client_list.values()]
@@ -115,22 +115,25 @@ def handle_client(conn, addr):
                 sendMessageList(message_list, conn)
 
     while True:
-        # Receive length of the message from the client
-        msg_length = conn.recv(HEADERLEN).decode(FORMAT)
-        if msg_length:
-            # Receive data from the client
-            msg = conn.recv(int(msg_length)).decode(FORMAT)
-            # If the client sends the DISCONNECT_MESSAGE, disconnect the client
-            if msg == DISCONNECT_MESSAGE:
-                break
-            # Add the message to the list of messages
-            message_list.append([login, msg])
-            # If there are more than 1 client, save the messages in a file
-            if len(client_list) > 1:
-                saveMessageList(message_list)
-            # Send the message to all the clients
-            for client in client_list.keys():
-                sendMessageList(message_list, client)
+        try:
+            # Receive length of the message from the client
+            msg_length = conn.recv(HEADERLEN).decode(FORMAT)
+            if msg_length:
+                # Receive data from the client
+                msg = conn.recv(int(msg_length)).decode(FORMAT)
+                # If the client sends the DISCONNECT_MESSAGE, disconnect the client
+                if msg == DISCONNECT_MESSAGE:
+                    break
+                # Add the message to the list of messages
+                message_list.append([login, msg])
+                # If there are more than 1 client, save the messages in a file
+                if len(client_list) > 1:
+                    saveMessageList(message_list)
+                # Send the message to all the clients
+                for client in client_list.keys():
+                    sendMessageList(message_list, client)
+        except:
+            break
     # When out of while loop disconnect client
     print(f"[DISCONNECTED] {addr} disconnected.")
     del client_list[conn]
@@ -146,7 +149,6 @@ def start():
         # Create a thread for each client (to handle multiple clients)
         thread = threading.Thread(target=handle_client, args=(conn, address))
         thread.start()
-        print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}")
 
 
 print("[STARTING] Server is starting...")
