@@ -17,7 +17,10 @@ class Client:
         self.sender = None
         self.login = None
         self.connected = None
-        self.client = None
+
+        # Socket = endpoint that receives data
+        # Create a socket object (AF_INET = IPv4, SOCK_STREAM = TCP)
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.message_list = []
         self.newMessage = False
@@ -26,9 +29,6 @@ class Client:
     def connect(self):
         self.SERVER = self.findServerHome()
 
-        # Socket = endpoint that receives data
-        # Create a socket object (AF_INET = IPv4, SOCK_STREAM = TCP)
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Connect the socket to the port 6969
         self.client.connect((self.SERVER, self.DEFAULT_PORT))
         self.client.send(bytes("PERMANENT", self.FORMAT))
@@ -117,7 +117,10 @@ class Client:
 
     def receive(self):
         # Get the type of message (0 -> message, 1 -> messageList)
-        msg_type = int(self.client.recv(1).decode(self.FORMAT))
+        try:
+            msg_type = int(self.client.recv(1).decode(self.FORMAT))
+        except:
+            return
         if msg_type == 0:
             msg_length = int(self.client.recv(self.HEADERLEN).decode(self.FORMAT))
             if msg_length:

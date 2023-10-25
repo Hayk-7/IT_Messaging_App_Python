@@ -9,11 +9,11 @@ import client
 import interface
 
 if __name__ == '__main__':
-    # Create a client
-    localClient = client.Client()
-    # Connect the client to the server
-    localClient.connect()
     try:
+        # Create a client
+        localClient = client.Client()
+        # Connect the client to the server
+        localClient.connect()
         print("init")
         interface = interface.Interface(480, 700, f"Whatsdown! Logged in as: {localClient.login}", localClient)
     except Exception as e:
