@@ -39,7 +39,9 @@ class Client:
         print(msg.decode(self.FORMAT))
 
         # Send login to the server
-        self.login = input("Login: ")
+        self.login = ""
+        while self.login == "" or self.login.isspace():
+            self.login = input("Login: ")
         self.client.send(bytes(self.login, self.FORMAT))
 
         # Listen for messages from the server and be able to send messages to the server at the same time using
@@ -67,18 +69,18 @@ class Client:
 
     def findServerHome(self):
         s = time.time()
-        for x1 in range(30, 169):
-            for x2 in range(32,33):
+        for x1 in range(168, 169):
+            for x2 in range(100):
                 for x3 in range(100):
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     sock.settimeout(0.0001)
-                    print(f"Trying: 172.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
-                    result = sock.connect_ex((f"172.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
+                    print(f"Trying: 192.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
+                    result = sock.connect_ex((f"192.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
                     if result == 0:
                         e = time.time()
-                        print(f"Found: 172.{x1}.{x2}.{x3} in {e - s}s")
+                        print(f"Found: 192.{x1}.{x2}.{x3} in {e - s}s")
                         sock.close()
-                        return f"172.{x1}.{x2}.{x3}"
+                        return f"192.{x1}.{x2}.{x3}"
         sock.close()
         print("No server found")
 
