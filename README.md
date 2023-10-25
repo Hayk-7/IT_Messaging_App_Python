@@ -5,6 +5,12 @@
 Ce projet est une interface tkinter qui permet d'envoyer des messages entre différents appareils sur un même réseau.
 Il est composé de 3 fichiers python: main.py, client.py et server.py.
 
+## Main.py
+Le fichier `main.py` contient le code local du chat. C'est le code que chaque personne doit avoir pour utiliser le chat. Il contient l'interface graphique et traite la réception de message pour les afficher ensuite.
+
+1. 
+
+
 ## Client.py
 
 Le fichier `client.py` contient le code pour le client du chat.
