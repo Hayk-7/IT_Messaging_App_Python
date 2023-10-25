@@ -2,7 +2,8 @@
 # Chat Python - Client et Serveur
 
 ## Introduction
-Dans ce projet, nous allons créer un simple chat en utilisant Python. Le chat sera composé de deux parties : le client et le serveur. Le client permettra aux utilisateurs de se connecter et d'envoyer des messages au serveur, qui redistribuera ces messages à tous les clients connectés.
+Ce projet est une interface tkinter qui permet d'envoyer des messages entre différents appareils sur un même réseau.
+Il est composé de 3 fichiers python: main.py, client.py et server.py.
 
 ## Client.py
 
