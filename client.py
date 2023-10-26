@@ -4,7 +4,7 @@ import time
 
 
 class Client:
-    def __init__(self):
+    def __init__(self, LOGIN):
         # HEADERLEN = Information about the message to be received (in this case, the length of the message)
         self.HEADERLEN = 64
         # FORMAT = The format (encryption) of the messages
@@ -15,7 +15,7 @@ class Client:
 
         self.listener = None
         self.sender = None
-        self.login = None
+        self.login = LOGIN
         self.connected = None
 
         # Socket = endpoint that receives data
@@ -38,10 +38,6 @@ class Client:
         msg = self.client.recv(128)
         print(msg.decode(self.FORMAT))
 
-        # Send login to the server
-        self.login = ""
-        while self.login == "" or self.login.isspace():
-            self.login = input("Login: ")
         self.client.send(bytes(self.login, self.FORMAT))
 
         # Listen for messages from the server and be able to send messages to the server at the same time using

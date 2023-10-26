@@ -7,8 +7,8 @@ import interface
 
 
 # !!! Work with CANVAS
-class Interface:
-    def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, TITLE, LOCALCLIENT):
+class WhatsDownMainWindow:
+    def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, LOCALCLIENT):
         """"
         Creates the main application window
         """
@@ -33,7 +33,7 @@ class Interface:
         self.button_size = self.input_box_height
 
         # Set window title
-        self.title = TITLE
+        self.title = f"Whatsdown! Logged in as: {self.localClient.login}"
 
         # self.style = ttk.Style()
         # self.style.configure("Message.TFrame", background="lightblue")
@@ -179,3 +179,19 @@ class Interface:
         # Display the messages
         for login, msg in messages:
             self.create_message_frame(msg, login, self.canvas_frame)
+
+
+class WhatsDownLoginPage:
+    def __init__(self, SIZEX, SIZEY):
+
+        self.root = Tk()
+        self.root.geometry(f"{SIZEX}x{SIZEY}")
+        self.root.title("WhatsDown! - Login")
+        self.root.iconbitmap("icon.ico")
+
+        self.login = ""
+
+        self.root.mainloop()
+
+    def getLogin(self):
+        return self.login
