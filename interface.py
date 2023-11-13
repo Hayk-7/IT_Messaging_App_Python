@@ -35,6 +35,10 @@ class WhatsDownMainWindow:
         # Set window title
         self.title = f"Whatsdown! Logged in as: {self.localClient.login}"
 
+        # self.style = ttk.Style()
+        # self.style.configure("Message.TFrame", background="lightblue")
+        # self.style.configure("Sender.TLabel", background="lightblue", foreground="black")
+
         # Create the main application window
         self.root = Tk()
 
@@ -91,7 +95,7 @@ class WhatsDownMainWindow:
 
         self.send_button = tk.Button(self.root, height=int(self.button_size * 0.8), width=int(self.button_size * 1),
                                      text='Click Me !',
-                                     image=send_icon, command=lambda: self.addMessage())
+                                     image=send_icon, command=lambda: self.ajouter_message())
 
         self.send_button.pack(side=tk.LEFT)
         # self.send_button.place(x=(self.screen_width-self.button_size), y=(self.screen_height-self.button_size))
@@ -101,10 +105,6 @@ class WhatsDownMainWindow:
         # self.root.resizable(width=False, height=False)
 
         self.checkNewMessage()
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
-
-        for i in range(20):
-            self.createMessageFrame(i, "Hi", self.canvas_frame)
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
@@ -118,27 +118,26 @@ class WhatsDownMainWindow:
         quit()
 
     def scroll(self):
-        self.canvas.update_idletasks()
         self.canvas.yview_moveto(1)
 
     def checkNewMessage(self):
         # Check if the chat file was found and loaded
         if self.localClient.loadChatFile and self.localClient.newMessage:
-            self.displayMessageList()
+            self.display_messageList()
             self.localClient.loadChatFile = False
             self.localClient.newMessage = False
 
         # Check if there are new messages
         if self.localClient.newMessage:
             # Display the messages
-            self.createMessageFrame(self.localClient.message_list[-1][1], self.localClient.message_list[-1][0], self.canvas_frame)
+            self.create_message_frame(self.localClient.message_list[-1][1], self.localClient.message_list[-1][0], self.canvas_frame)
             self.localClient.newMessage = False
 
         # Check again in 100ms
         self.root.after(100, self.checkNewMessage)
 
     # Take the input and move everything up
-    def addMessage(self):
+    def ajouter_message(self):
         """
         Sends the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
@@ -149,12 +148,15 @@ class WhatsDownMainWindow:
         self.localClient.send(self.input_text)
         if self.input_text == self.localClient.DISCONNECT_MESSAGE:
             self.on_close()
+        # self.messages.append(self.input_text)
+        # self.create_message_frame(self.input_text, self.localClient.login, self.canvas_frame)
+        # self.create_message_frame(self.input_text, "Other", self.canvas_frame)
+        self.canvas.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
-        self.scroll()
+
         self.input_box.delete("0", tk.END)  # Clear input from beginning to end
 
-    def createMessageFrame(self, message, who, where):
-        print("Creating frame")
+    def create_message_frame(self, message, who, where):
         frame = ttk.Frame(where)
         now = datetime.now().strftime("%H:%M:%S")
         sender = ttk.Label(frame, text=f"{who}, sent at {now}", font=("Comic Sans MS", 8, "italic"))
@@ -169,13 +171,14 @@ class WhatsDownMainWindow:
         message_text.grid(column=0, row=1, sticky="w")
         frame.grid(column=0, row=where.grid_size()[1], sticky="w")
         where.grid_columnconfigure(0, weight=1)
+        self.scroll()
 
-    def displayMessageList(self):
+    def display_messageList(self):
         # Get the messages from the server
         messages = self.localClient.message_list
         # Display the messages
         for login, msg in messages:
-            self.createMessageFrame(msg, login, self.canvas_frame)
+            self.create_message_frame(msg, login, self.canvas_frame)
 
 
 class WhatsDownLoginPage:
