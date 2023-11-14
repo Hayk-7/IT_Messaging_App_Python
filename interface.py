@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, Tk, Scrollbar
 from PIL import Image, ImageTk
-from datetime import datetime # On peut ajouter l'heure de l'envoi du message
+from datetime import datetime  # On peut ajouter l'heure de l'envoi du message
 
 import interface
 
@@ -56,9 +56,7 @@ class WhatsDownMainWindow:
         background_label.place(relwidth=1, relheight=1)
 
         # Create a canvas to hold the chat window
-        self.canvas = tk.Canvas(self.messages_frame, width=self.screen_width,
-                                height=(self.screen_height - self.input_box_height))
-
+        self.canvas = tk.Canvas(self.messages_frame, bg="blue", highlightthickness=0, height=self.screen_height)
         # self.canvas.create_image(0, self.screen_height-self.background_image.height()-self.input_box_height, anchor=tk.NW, image=self.background_image)
         # tk.LEFT au cas ou on veut mettre des boutons a droite dans de prochaines versions
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -73,6 +71,7 @@ class WhatsDownMainWindow:
         self.canvas_frame = ttk.Frame(self.canvas, style="Message.TFrame")
         self.canvas.create_window((0, 0), window=self.canvas_frame, anchor="nw")
 
+        # To adapt the scroll bar to the canvas when size changed
         self.canvas.bind('<Configure>', self.canvas.config(scrollregion=self.canvas.bbox("all")))
 
         # Add the input box
@@ -84,6 +83,8 @@ class WhatsDownMainWindow:
         # self.input_box.place(x=0, y=self.root.winfo_height() - self.input_box_height,
         #                      height=self.input_box_height, width=self.root.winfo_width() - self.button_size)
         self.input_box.pack(side=tk.LEFT)
+        self.input_box.bind('<Return>', self.onEnterPress)
+
         # Add the send button and display it
         send_icon = ImageTk.PhotoImage(
             Image.open("send_icon.png").resize((int(self.button_size * 0.8), int(self.button_size * 1)),
@@ -102,10 +103,11 @@ class WhatsDownMainWindow:
 
         self.checkNewMessage()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
+        self.scroll()
 
-        for i in range(20):
-            self.createMessageFrame(i, "Hi", self.canvas_frame)
-
+        # for i in range(20):
+        #     self.createMessageFrame(i, "Hi", self.canvas_frame)
+        self.canvas.yview_moveto(1.0)
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.root.mainloop()
@@ -116,6 +118,9 @@ class WhatsDownMainWindow:
         self.localClient.client.close()
         self.root.destroy()
         quit()
+
+    def onEnterPress(self, event):
+        self.addMessage()
 
     def scroll(self):
         self.canvas.update_idletasks()
@@ -129,9 +134,12 @@ class WhatsDownMainWindow:
             self.localClient.newMessage = False
 
         # Check if there are new messages
+        # print("Hola")
         if self.localClient.newMessage:
+            print("Something new")
             # Display the messages
-            self.createMessageFrame(self.localClient.message_list[-1][1], self.localClient.message_list[-1][0], self.canvas_frame)
+            self.createMessageFrame(self.localClient.message_list[-1][1], self.localClient.message_list[-1][0],
+                                    self.canvas_frame)
             self.localClient.newMessage = False
 
         # Check again in 100ms
@@ -147,6 +155,7 @@ class WhatsDownMainWindow:
         if self.input_text == "" or self.input_text == " ":
             return
         self.localClient.send(self.input_text)
+        print("Sent message to server")
         if self.input_text == self.localClient.DISCONNECT_MESSAGE:
             self.on_close()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
@@ -161,9 +170,10 @@ class WhatsDownMainWindow:
         sender.grid(column=0, row=0, sticky="w")
         if who == self.localClient.login:
             ###!!! Y A ENCORE A REFORMATER LE HEIGHT POUR ADAPTER A LA TAILLE DU TEXTE
-            message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width/8.3), height=1, bg=self.colorMe)
+            message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1, bg=self.colorMe)
         else:
-            message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width/8.3), height=1, bg=self.colorOther)
+            message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1,
+                                   bg=self.colorOther)
         message_text.insert(tk.END, f"{message}")
         message_text.config(state=tk.DISABLED)  # A comprendre?
         message_text.grid(column=0, row=1, sticky="w")
@@ -180,7 +190,6 @@ class WhatsDownMainWindow:
 
 class WhatsDownLoginPage:
     def __init__(self, SIZEX, SIZEY):
-
         self.root = Tk()
         self.root.geometry(f"{SIZEX}x{SIZEY}")
         self.root.title("WhatsDown! - Login")
