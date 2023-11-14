@@ -134,7 +134,6 @@ class WhatsDownMainWindow:
             self.localClient.newMessage = False
 
         # Check if there are new messages
-        # print("Hola")
         if self.localClient.newMessage:
             print("Something new")
             # Display the messages
@@ -159,7 +158,6 @@ class WhatsDownMainWindow:
         if self.input_text == self.localClient.DISCONNECT_MESSAGE:
             self.on_close()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
-        self.scroll()
         self.input_box.delete("0", tk.END)  # Clear input from beginning to end
 
     def createMessageFrame(self, message, who, where):
@@ -179,6 +177,7 @@ class WhatsDownMainWindow:
         message_text.grid(column=0, row=1, sticky="w")
         frame.grid(column=0, row=where.grid_size()[1], sticky="w")
         where.grid_columnconfigure(0, weight=1)
+        self.scroll()
 
     def displayMessageList(self):
         # Get the messages from the server
@@ -190,6 +189,7 @@ class WhatsDownMainWindow:
 
 class WhatsDownLoginPage:
     def __init__(self, SIZEX, SIZEY):
+
         self.root = Tk()
         self.root.geometry(f"{SIZEX}x{SIZEY}")
         self.root.title("WhatsDown! - Login")

@@ -16,6 +16,7 @@ if __name__ == '__main__':
         # while login == "" or login.isspace():
         #     login = login_page.login
         login = input("Enter your login: ")
+
         # Create a client
         localClient = client.Client(login)
         # Connect the client to the server
