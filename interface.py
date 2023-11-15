@@ -82,8 +82,8 @@ class WhatsDownMainWindow:
 
         # self.input_box.place(x=0, y=self.root.winfo_height() - self.input_box_height,
         #                      height=self.input_box_height, width=self.root.winfo_width() - self.button_size)
-        self.input_box.pack(side=tk.LEFT)
-        self.input_box.bind('<Return>', self.onEnterPress)
+        # self.input_box.pack(side=tk.LEFT)
+        # self.input_box.bind('<Return>', self.onEnterPress)
 
         # Add the send button and display it
         send_icon = ImageTk.PhotoImage(
@@ -94,7 +94,7 @@ class WhatsDownMainWindow:
                                      text='Click Me !',
                                      image=send_icon, command=lambda: self.addMessage())
 
-        self.send_button.pack(side=tk.LEFT)
+        # self.send_button.pack(side=tk.LEFT)
         # self.send_button.place(x=(self.screen_width-self.button_size), y=(self.screen_height-self.button_size))
 
         self.messages = []
@@ -157,7 +157,6 @@ class WhatsDownMainWindow:
         print("Sent message to server")
         if self.input_text == self.localClient.DISCONNECT_MESSAGE:
             self.on_close()
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
         self.input_box.delete("0", tk.END)  # Clear input from beginning to end
 
     def createMessageFrame(self, message, who, where):
@@ -177,6 +176,7 @@ class WhatsDownMainWindow:
         message_text.grid(column=0, row=1, sticky="w")
         frame.grid(column=0, row=where.grid_size()[1], sticky="w")
         where.grid_columnconfigure(0, weight=1)
+        self.canvas.config(scrollregion=self.canvas.bbox("all"))
         self.scroll()
 
     def displayMessageList(self):
