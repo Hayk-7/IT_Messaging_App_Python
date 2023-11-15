@@ -3,9 +3,6 @@ from tkinter import ttk, Tk, Scrollbar
 from PIL import Image, ImageTk
 from datetime import datetime  # On peut ajouter l'heure de l'envoi du message
 
-import interface
-
-
 # !!! Work with CANVAS
 class WhatsDownMainWindow:
     def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, LOCALCLIENT):
@@ -82,8 +79,8 @@ class WhatsDownMainWindow:
 
         # self.input_box.place(x=0, y=self.root.winfo_height() - self.input_box_height,
         #                      height=self.input_box_height, width=self.root.winfo_width() - self.button_size)
-        # self.input_box.pack(side=tk.LEFT)
-        # self.input_box.bind('<Return>', self.onEnterPress)
+        self.input_box.pack(side=tk.LEFT)
+        self.input_box.bind('<Return>', self.onEnterPress)
 
         # Add the send button and display it
         send_icon = ImageTk.PhotoImage(
@@ -94,7 +91,7 @@ class WhatsDownMainWindow:
                                      text='Click Me !',
                                      image=send_icon, command=lambda: self.addMessage())
 
-        # self.send_button.pack(side=tk.LEFT)
+        self.send_button.pack(side=tk.LEFT)
         # self.send_button.place(x=(self.screen_width-self.button_size), y=(self.screen_height-self.button_size))
 
         self.messages = []
@@ -123,6 +120,8 @@ class WhatsDownMainWindow:
         self.addMessage()
 
     def scroll(self):
+        self.canvas.update_idletasks()
+        self.canvas.config(scrollregion=self.canvas.bbox("all"))
         self.canvas.update_idletasks()
         self.canvas.yview_moveto(1)
 
@@ -176,7 +175,7 @@ class WhatsDownMainWindow:
         message_text.grid(column=0, row=1, sticky="w")
         frame.grid(column=0, row=where.grid_size()[1], sticky="w")
         where.grid_columnconfigure(0, weight=1)
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+
         self.scroll()
 
     def displayMessageList(self):
