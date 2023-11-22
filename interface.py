@@ -1,7 +1,19 @@
+import os.path  # Needed for .exe compilation
+import sys  # Needed for .exe compilation
 import tkinter as tk
 from tkinter import ttk, Tk, Scrollbar
 from PIL import Image, ImageTk
 from datetime import datetime  # On peut ajouter l'heure de l'envoi du message
+
+
+# https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
+# get_path() Imported from link above, needed in order to use images for the standalone .exe
+def get_path(filename):
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, filename)
+    else:
+        return filename
+
 
 # !!! Work with CANVAS
 class WhatsDownMainWindow:
@@ -42,9 +54,9 @@ class WhatsDownMainWindow:
             f"{self.screen_width}x{self.screen_height}+{int(self.root.winfo_screenwidth() / 2 - self.screen_width / 2)}+{0}")  # !!! + THAN 80 CHR.
         # Set window title and icon
         self.root.title(self.title)
-        self.root.iconbitmap("icon.ico")
+        self.root.iconbitmap(get_path("icon.ico"))
 
-        self.background_image = tk.PhotoImage(file="background.png")
+        self.background_image = tk.PhotoImage(file=get_path("background.png"))
 
         # Background to be added to message frame not canvas
         self.messages_frame = ttk.Frame(self.root, style="Message.TFrame", height=300)
@@ -86,8 +98,8 @@ class WhatsDownMainWindow:
 
         # Add the send button and display it
         send_icon = ImageTk.PhotoImage(
-            Image.open("send_icon.png").resize((int(self.button_size * 0.8), int(self.button_size * 1)),
-                                               Image.BOX))  # I didn't put self
+            Image.open(get_path("send_icon.png")).resize((int(self.button_size * 0.8), int(self.button_size * 1)),
+                                                         Image.BOX))  # I didn't put self
 
         self.send_button = tk.Button(self.root, height=int(self.button_size * 0.8), width=int(self.button_size * 1),
                                      text='Click Me !',
@@ -169,25 +181,27 @@ class WhatsDownMainWindow:
             elif self.input_text.startswith("/fibonacci"):
                 # Handle case where user doesn't provide arguments
                 if len(arguments) < 2:
-                    self.createMessageFrame("Arguments missing!", "Error", self.canvas_frame)
+                    self.createMessageFrame(arguments[0] + " requires 1 argument (int)!", "Error", self.canvas_frame)
                     return
 
                 # Handle case where user doesn't provide an integer
                 try:
                     n = int(arguments[1])
                 except ValueError:
-                    self.createMessageFrame("/fibonacci requires an integer as an argument!", "Error", self.canvas_frame)
+                    self.createMessageFrame(arguments[0] + " requires an integer as an argument!", "Error",
+                                            self.canvas_frame)
                     return
 
                 # Handle case where user inputs invalid integer (less than 1)
                 if n < 1:
-                    self.createMessageFrame("/fibonacci requires an integer greater than 1!", "Error", self.canvas_frame)
+                    self.createMessageFrame(arguments[0] + " requires an integer greater than 1!", "Error",
+                                            self.canvas_frame)
                     return
 
                 self.localClient.send(f"{n}th fibonacci number is: {self.Fibonacci(n)}")
 
             else:
-                self.createMessageFrame("Command not found", "Error", self.canvas_frame)
+                self.createMessageFrame(arguments[0] + " | Command not found!", "Error", self.canvas_frame)
                 return
 
         # If not a command send the message directly
@@ -236,12 +250,11 @@ class WhatsDownMainWindow:
         if n == 0 or n == 1:
             return n
 
-        return self.Fibonacci(n-1) + self.Fibonacci(n-2)
+        return self.Fibonacci(n - 1) + self.Fibonacci(n - 2)
 
 
 class WhatsDownLoginPage:
     def __init__(self, SIZEX, SIZEY):
-
         self.root = Tk()
         self.root.geometry(f"{SIZEX}x{SIZEY}")
         self.root.title("WhatsDown! - Login")
