@@ -17,6 +17,8 @@ class WhatsDownMainWindow:
         self.background_photo = None
         self.colorMe = "lightgreen"
         self.colorOther = "lightblue"
+        self.colorWarning = "yellow"
+        self.colorError = "red"
         self.text_color = "black"
         self.localClient = LOCALCLIENT
 
@@ -53,7 +55,7 @@ class WhatsDownMainWindow:
         background_label.place(relwidth=1, relheight=1)
 
         # Create a canvas to hold the chat window
-        self.canvas = tk.Canvas(self.messages_frame, bg="blue", highlightthickness=0, height=self.screen_height)
+        self.canvas = tk.Canvas(self.messages_frame, highlightthickness=0, height=self.screen_height)
         # self.canvas.create_image(0, self.screen_height-self.background_image.height()-self.input_box_height, anchor=tk.NW, image=self.background_image)
         # tk.LEFT au cas ou on veut mettre des boutons a droite dans de prochaines versions
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -73,7 +75,7 @@ class WhatsDownMainWindow:
 
         # Add the input box
         shift = self.input_box_height
-        print(shift)
+
         self.input_box = tk.Entry(self.root, width=WINDOW_WIDTH // 10 - shift // 8, bg="white", fg="black",
                                   font=("Comic Sans MS", 12), borderwidth=2, relief="sunken")
 
@@ -134,7 +136,6 @@ class WhatsDownMainWindow:
 
         # Check if there are new messages
         if self.localClient.newMessage:
-            print("Something new")
             # Display the messages
             self.createMessageFrame(self.localClient.message_list[-1][1], self.localClient.message_list[-1][0],
                                     self.canvas_frame)
@@ -150,26 +151,68 @@ class WhatsDownMainWindow:
         Doesn't send the input text if it's empty.
         """
         self.input_text = self.input_box.get()  # Get input
+
+        # Don't send if message is empty
         if self.input_text == "" or self.input_text == " ":
             return
-        self.localClient.send(self.input_text)
-        print("Sent message to server")
-        if self.input_text == self.localClient.DISCONNECT_MESSAGE:
-            self.on_close()
+
+        # Check if message is a command
+        if self.input_text[0] == "/":
+            arguments = self.input_text.split()
+
+            # Disconnect client if client send the disconnect message
+            if self.input_text == self.localClient.DISCONNECT_MESSAGE:
+                self.on_close()
+
+            # Send the fibonacci sequence
+            elif self.input_text.startswith("/fibonacci"):
+                # Handle case where user doesn't provide arguments
+                if len(arguments) < 2:
+                    self.createMessageFrame("Arguments missing!", "Error", self.canvas_frame)
+                    return
+
+                # Handle case where user doesn't provide an integer
+                try:
+                    n = int(arguments[1])
+                except ValueError:
+                    self.createMessageFrame("/fibonacci requires an integer as an argument!", "Error", self.canvas_frame)
+                    return
+
+                # Handle case where user inputs invalid integer (less than 1)
+                if n < 1:
+                    self.createMessageFrame("/fibonacci requires an integer greater than 1!", "Error", self.canvas_frame)
+                    return
+
+                self.localClient.send(f"{n}th fibonacci number is: {self.Fibonacci(n)}")
+
+        # If not a command send the message directly
+        else:
+            self.localClient.send(self.input_text)
+
         self.input_box.delete("0", tk.END)  # Clear input from beginning to end
 
     def createMessageFrame(self, message, who, where):
-        print("Creating frame")
         frame = ttk.Frame(where)
         now = datetime.now().strftime("%H:%M:%S")
         sender = ttk.Label(frame, text=f"{who}, sent at {now}", font=("Comic Sans MS", 8, "italic"))
         sender.grid(column=0, row=0, sticky="w")
+        color = self.colorOther
+
+        # if who == self.localClient.login:
+        #     ###!!! Y A ENCORE A REFORMATER LE HEIGHT POUR ADAPTER A LA TAILLE DU TEXTE
+        #     message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1, bg=self.colorMe)
+        # else:
+        #     message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1, bg=self.colorOther)
+
         if who == self.localClient.login:
-            ###!!! Y A ENCORE A REFORMATER LE HEIGHT POUR ADAPTER A LA TAILLE DU TEXTE
-            message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1, bg=self.colorMe)
-        else:
-            message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1,
-                                   bg=self.colorOther)
+            color = self.colorMe
+        elif who == "Error":
+            color = self.colorError
+        elif who == "Warning":
+            color = self.colorWarning
+
+        message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1, bg=color)
+
         message_text.insert(tk.END, f"{message}")
         message_text.config(state=tk.DISABLED)  # A comprendre?
         message_text.grid(column=0, row=1, sticky="w")
@@ -184,6 +227,12 @@ class WhatsDownMainWindow:
         # Display the messages
         for login, msg in messages:
             self.createMessageFrame(msg, login, self.canvas_frame)
+
+    def Fibonacci(self, n):
+        if n == 0 or n == 1:
+            return n
+
+        return self.Fibonacci(n-1) + self.Fibonacci(n-2)
 
 
 class WhatsDownLoginPage:
