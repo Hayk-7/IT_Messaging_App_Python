@@ -151,6 +151,7 @@ class WhatsDownMainWindow:
         Doesn't send the input text if it's empty.
         """
         self.input_text = self.input_box.get()  # Get input
+        self.input_box.delete("0", tk.END)  # Clear input from beginning to end
 
         # Don't send if message is empty
         if self.input_text == "" or self.input_text == " ":
@@ -185,12 +186,15 @@ class WhatsDownMainWindow:
 
                 self.localClient.send(f"{n}th fibonacci number is: {self.Fibonacci(n)}")
 
+            else:
+                self.createMessageFrame("Command not found", "Error", self.canvas_frame)
+                return
+
         # If not a command send the message directly
         else:
             self.localClient.send(self.input_text)
 
-        self.input_box.delete("0", tk.END)  # Clear input from beginning to end
-
+    # Do we need the "where" argument since it's always the same?
     def createMessageFrame(self, message, who, where):
         frame = ttk.Frame(where)
         now = datetime.now().strftime("%H:%M:%S")
