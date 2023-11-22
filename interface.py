@@ -103,7 +103,7 @@ class WhatsDownMainWindow:
 
         self.send_button = tk.Button(self.root, height=int(self.button_size * 0.8), width=int(self.button_size * 1),
                                      text='Click Me !',
-                                     image=send_icon, command=lambda: self.addMessage())
+                                     image=send_icon, command=lambda: self.handleInput())
 
         self.send_button.pack(side=tk.LEFT)
         # self.send_button.place(x=(self.screen_width-self.button_size), y=(self.screen_height-self.button_size))
@@ -117,12 +117,14 @@ class WhatsDownMainWindow:
         self.scroll()
 
         # for i in range(20):
-        #     self.createMessageFrame(i, "Hi", self.canvas_frame)
+        #     self.displayMessage(i, "Hi", self.canvas_frame)
         self.canvas.yview_moveto(1.0)
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.root.mainloop()
 
+    # Called when pressing the "X" to close the window
+    # Safely disconnects the client and ends the program
     def on_close(self):
         self.localClient.send(self.localClient.DISCONNECT_MESSAGE)
         self.localClient.connected = False
@@ -131,7 +133,7 @@ class WhatsDownMainWindow:
         quit()
 
     def onEnterPress(self, event):
-        self.addMessage()
+        self.handleInput()
 
     def scroll(self):
         self.canvas.update_idletasks()
@@ -149,15 +151,14 @@ class WhatsDownMainWindow:
         # Check if there are new messages
         if self.localClient.newMessage:
             # Display the messages
-            self.createMessageFrame(self.localClient.message_list[-1][1], self.localClient.message_list[-1][0],
-                                    self.canvas_frame)
+            self.displayMessage(self.localClient.message_list[-1][1], self.localClient.message_list[-1][0])
             self.localClient.newMessage = False
 
         # Check again in 100ms
         self.root.after(100, self.checkNewMessage)
 
-    # Take the input and move everything up
-    def addMessage(self):
+    # Handles the input
+    def handleInput(self):
         """
         Sends the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
@@ -181,27 +182,25 @@ class WhatsDownMainWindow:
             elif self.input_text.startswith("/fibonacci"):
                 # Handle case where user doesn't provide arguments
                 if len(arguments) < 2:
-                    self.createMessageFrame(arguments[0] + " requires 1 argument (int)!", "Error", self.canvas_frame)
+                    self.displayMessage(arguments[0] + " requires 1 argument (int)!", "Error")
                     return
 
                 # Handle case where user doesn't provide an integer
                 try:
                     n = int(arguments[1])
                 except ValueError:
-                    self.createMessageFrame(arguments[0] + " requires an integer as an argument!", "Error",
-                                            self.canvas_frame)
+                    self.displayMessage(arguments[0] + " requires an integer as an argument!", "Error")
                     return
 
                 # Handle case where user inputs invalid integer (less than 1)
                 if n < 1:
-                    self.createMessageFrame(arguments[0] + " requires an integer greater than 1!", "Error",
-                                            self.canvas_frame)
+                    self.displayMessage(arguments[0] + " requires an integer greater than 1!", "Error")
                     return
 
                 self.localClient.send(f"{n}th fibonacci number is: {self.Fibonacci(n)}")
 
             else:
-                self.createMessageFrame(arguments[0] + " | Command not found!", "Error", self.canvas_frame)
+                self.displayMessage(arguments[0] + " | Command not found!", "Error")
                 return
 
         # If not a command send the message directly
@@ -209,8 +208,8 @@ class WhatsDownMainWindow:
             self.localClient.send(self.input_text)
 
     # Do we need the "where" argument since it's always the same?
-    def createMessageFrame(self, message, who, where):
-        frame = ttk.Frame(where)
+    def displayMessage(self, message, who):
+        frame = ttk.Frame(self.canvas_frame)
         now = datetime.now().strftime("%H:%M:%S")
         sender = ttk.Label(frame, text=f"{who}, sent at {now}", font=("Comic Sans MS", 8, "italic"))
         sender.grid(column=0, row=0, sticky="w")
@@ -234,8 +233,8 @@ class WhatsDownMainWindow:
         message_text.insert(tk.END, f"{message}")
         message_text.config(state=tk.DISABLED)  # A comprendre?
         message_text.grid(column=0, row=1, sticky="w")
-        frame.grid(column=0, row=where.grid_size()[1], sticky="w")
-        where.grid_columnconfigure(0, weight=1)
+        frame.grid(column=0, row=self.canvas_frame.grid_size()[1], sticky="w")
+        self.canvas_frame.grid_columnconfigure(0, weight=1)
 
         self.scroll()
 
@@ -244,7 +243,7 @@ class WhatsDownMainWindow:
         messages = self.localClient.message_list
         # Display the messages
         for login, msg in messages:
-            self.createMessageFrame(msg, login, self.canvas_frame)
+            self.displayMessage(msg, login)
 
     def Fibonacci(self, n):
         if n == 0 or n == 1:
