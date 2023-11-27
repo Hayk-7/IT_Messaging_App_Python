@@ -1,7 +1,19 @@
+import os.path  # Needed for .exe compilation
+import sys  # Needed for .exe compilation
 import tkinter as tk
 from tkinter import ttk, Tk, Scrollbar
 from PIL import Image, ImageTk
 from datetime import datetime  # On peut ajouter l'heure de l'envoi du message
+
+
+# https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
+# get_path() Imported from link above, needed in order to use images for the standalone .exe
+def get_path(filename):
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, filename)
+    else:
+        return filename
+
 
 # !!! Work with CANVAS
 class WhatsDownMainWindow:
@@ -17,6 +29,8 @@ class WhatsDownMainWindow:
         self.background_photo = None
         self.colorMe = "lightgreen"
         self.colorOther = "lightblue"
+        self.colorWarning = "yellow"
+        self.colorError = "red"
         self.text_color = "black"
         self.localClient = LOCALCLIENT
 
@@ -40,9 +54,9 @@ class WhatsDownMainWindow:
             f"{self.screen_width}x{self.screen_height}+{int(self.root.winfo_screenwidth() / 2 - self.screen_width / 2)}+{0}")  # !!! + THAN 80 CHR.
         # Set window title and icon
         self.root.title(self.title)
-        self.root.iconbitmap("icon.ico")
+        self.root.iconbitmap(get_path("icon.ico"))
 
-        self.background_image = tk.PhotoImage(file="background.png")
+        self.background_image = tk.PhotoImage(file=get_path("background.png"))
 
         # Background to be added to message frame not canvas
         self.messages_frame = ttk.Frame(self.root, style="Message.TFrame", height=300)
@@ -53,7 +67,7 @@ class WhatsDownMainWindow:
         background_label.place(relwidth=1, relheight=1)
 
         # Create a canvas to hold the chat window
-        self.canvas = tk.Canvas(self.messages_frame, bg="blue", highlightthickness=0, height=self.screen_height)
+        self.canvas = tk.Canvas(self.messages_frame, highlightthickness=0, height=self.screen_height)
         # self.canvas.create_image(0, self.screen_height-self.background_image.height()-self.input_box_height, anchor=tk.NW, image=self.background_image)
         # tk.LEFT au cas ou on veut mettre des boutons a droite dans de prochaines versions
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -73,7 +87,7 @@ class WhatsDownMainWindow:
 
         # Add the input box
         shift = self.input_box_height
-        print(shift)
+
         self.input_box = tk.Entry(self.root, width=WINDOW_WIDTH // 10 - shift // 8, bg="white", fg="black",
                                   font=("Comic Sans MS", 12), borderwidth=2, relief="sunken")
 
@@ -84,12 +98,12 @@ class WhatsDownMainWindow:
 
         # Add the send button and display it
         send_icon = ImageTk.PhotoImage(
-            Image.open("send_icon.png").resize((int(self.button_size * 0.8), int(self.button_size * 1)),
-                                               Image.BOX))  # I didn't put self
+            Image.open(get_path("send_icon.png")).resize((int(self.button_size * 0.8), int(self.button_size * 1)),
+                                                         Image.BOX))  # I didn't put self
 
         self.send_button = tk.Button(self.root, height=int(self.button_size * 0.8), width=int(self.button_size * 1),
                                      text='Click Me !',
-                                     image=send_icon, command=lambda: self.addMessage())
+                                     image=send_icon, command=lambda: self.handleInput())
 
         self.send_button.pack(side=tk.LEFT)
         # self.send_button.place(x=(self.screen_width-self.button_size), y=(self.screen_height-self.button_size))
@@ -103,12 +117,14 @@ class WhatsDownMainWindow:
         self.scroll()
 
         # for i in range(20):
-        #     self.createMessageFrame(i, "Hi", self.canvas_frame)
+        #     self.displayMessage(i, "Hi", self.canvas_frame)
         self.canvas.yview_moveto(1.0)
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.root.mainloop()
 
+    # Called when pressing the "X" to close the window
+    # Safely disconnects the client and ends the program
     def on_close(self):
         self.localClient.send(self.localClient.DISCONNECT_MESSAGE)
         self.localClient.connected = False
@@ -117,7 +133,7 @@ class WhatsDownMainWindow:
         quit()
 
     def onEnterPress(self, event):
-        self.addMessage()
+        self.handleInput()
 
     def scroll(self):
         self.canvas.update_idletasks()
@@ -134,47 +150,91 @@ class WhatsDownMainWindow:
 
         # Check if there are new messages
         if self.localClient.newMessage:
-            print("Something new")
             # Display the messages
-            self.createMessageFrame(self.localClient.message_list[-1][1], self.localClient.message_list[-1][0],
-                                    self.canvas_frame)
+            self.displayMessage(self.localClient.message_list[-1][1], self.localClient.message_list[-1][0])
             self.localClient.newMessage = False
 
         # Check again in 100ms
         self.root.after(100, self.checkNewMessage)
 
-    # Take the input and move everything up
-    def addMessage(self):
+    # Handles the input
+    def handleInput(self):
         """
         Sends the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
         """
         self.input_text = self.input_box.get()  # Get input
-        if self.input_text == "" or self.input_text == " ":
-            return
-        self.localClient.send(self.input_text)
-        print("Sent message to server")
-        if self.input_text == self.localClient.DISCONNECT_MESSAGE:
-            self.on_close()
         self.input_box.delete("0", tk.END)  # Clear input from beginning to end
 
-    def createMessageFrame(self, message, who, where):
-        print("Creating frame")
-        frame = ttk.Frame(where)
+        # Don't send if message is empty
+        if self.input_text == "" or self.input_text == " ":
+            return
+
+        # Check if message is a command
+        if self.input_text[0] == "/":
+            arguments = self.input_text.split()
+
+            # Disconnect client if client send the disconnect message
+            if self.input_text == self.localClient.DISCONNECT_MESSAGE:
+                self.on_close()
+
+            # Send the fibonacci sequence
+            elif self.input_text.startswith("/fibonacci"):
+                # Handle case where user doesn't provide arguments
+                if len(arguments) < 2:
+                    self.displayMessage(arguments[0] + " requires 1 argument (int)!", "Error")
+                    return
+
+                # Handle case where user doesn't provide an integer
+                try:
+                    n = int(arguments[1])
+                except ValueError:
+                    self.displayMessage(arguments[0] + " requires an integer as an argument!", "Error")
+                    return
+
+                # Handle case where user inputs invalid integer (less than 1)
+                if n < 1:
+                    self.displayMessage(arguments[0] + " requires an integer greater than 1!", "Error")
+                    return
+
+                self.localClient.send(f"{n}th fibonacci number is: {self.Fibonacci(n)}")
+
+            else:
+                self.displayMessage(arguments[0] + " | Command not found!", "Error")
+                return
+
+        # If not a command send the message directly
+        else:
+            self.localClient.send(self.input_text)
+
+    # Do we need the "where" argument since it's always the same?
+    def displayMessage(self, message, who):
+        frame = ttk.Frame(self.canvas_frame)
         now = datetime.now().strftime("%H:%M:%S")
         sender = ttk.Label(frame, text=f"{who}, sent at {now}", font=("Comic Sans MS", 8, "italic"))
         sender.grid(column=0, row=0, sticky="w")
+        color = self.colorOther
+
+        # if who == self.localClient.login:
+        #     ###!!! Y A ENCORE A REFORMATER LE HEIGHT POUR ADAPTER A LA TAILLE DU TEXTE
+        #     message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1, bg=self.colorMe)
+        # else:
+        #     message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1, bg=self.colorOther)
+
         if who == self.localClient.login:
-            ###!!! Y A ENCORE A REFORMATER LE HEIGHT POUR ADAPTER A LA TAILLE DU TEXTE
-            message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1, bg=self.colorMe)
-        else:
-            message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1,
-                                   bg=self.colorOther)
+            color = self.colorMe
+        elif who == "Error":
+            color = self.colorError
+        elif who == "Warning":
+            color = self.colorWarning
+
+        message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1, bg=color)
+
         message_text.insert(tk.END, f"{message}")
         message_text.config(state=tk.DISABLED)  # A comprendre?
         message_text.grid(column=0, row=1, sticky="w")
-        frame.grid(column=0, row=where.grid_size()[1], sticky="w")
-        where.grid_columnconfigure(0, weight=1)
+        frame.grid(column=0, row=self.canvas_frame.grid_size()[1], sticky="w")
+        self.canvas_frame.grid_columnconfigure(0, weight=1)
 
         self.scroll()
 
@@ -183,12 +243,17 @@ class WhatsDownMainWindow:
         messages = self.localClient.message_list
         # Display the messages
         for login, msg in messages:
-            self.createMessageFrame(msg, login, self.canvas_frame)
+            self.displayMessage(msg, login)
+
+    def Fibonacci(self, n):
+        if n == 0 or n == 1:
+            return n
+
+        return self.Fibonacci(n - 1) + self.Fibonacci(n - 2)
 
 
 class WhatsDownLoginPage:
     def __init__(self, SIZEX, SIZEY):
-
         self.root = Tk()
         self.root.geometry(f"{SIZEX}x{SIZEY}")
         self.root.title("WhatsDown! - Login")

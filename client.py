@@ -27,7 +27,7 @@ class Client:
         self.loadChatFile = False
 
     def connect(self):
-        self.SERVER = self.findServerSchool()
+        self.SERVER = self.findServerHome()
 
         # Connect the socket to the port 6969
         self.client.connect((self.SERVER, self.DEFAULT_PORT))
@@ -49,8 +49,8 @@ class Client:
     def findServerSchool(self):
         s = time.time()
         for x1 in range(134, 136):
-            for x2 in range(53,55):
-                for x3 in range(133, 135):
+            for x2 in range(53, 55):
+                for x3 in range(100, 135):
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     sock.settimeout(0.0001)
                     print(f"Trying: 10.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
@@ -77,23 +77,6 @@ class Client:
                         print(f"Found: 192.{x1}.{x2}.{x3} in {e - s}s")
                         sock.close()
                         return f"192.{x1}.{x2}.{x3}"
-        sock.close()
-        print("No server found")
-
-    def findServerHotspot(self):
-        s = time.time()
-        for x1 in range(10, 11):
-            for x2 in range(22, 23):
-                for x3 in range(94, 95):
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    sock.settimeout(0.0001)
-                    print(f"Trying: 26.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
-                    result = sock.connect_ex((f"26.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
-                    if result == 0:
-                        e = time.time()
-                        print(f"Found: 26.{x1}.{x2}.{x3} in {e - s}s")
-                        sock.close()
-                        return f"26.{x1}.{x2}.{x3}"
         sock.close()
         print("No server found")
 

@@ -121,9 +121,15 @@ def handle_client(conn, addr):
             if msg_length:
                 # Receive data from the client
                 msg = conn.recv(int(msg_length)).decode(FORMAT)
+
                 # If the client sends the DISCONNECT_MESSAGE, disconnect the client
                 if msg == DISCONNECT_MESSAGE:
                     break
+
+                # If client uses command don't save the command
+                if msg[0] == "/":
+                    return
+
                 # Add the message to the list of messages
                 message_list.append([login, msg])
                 # If there are more than 1 client, save the messages in a file
@@ -134,6 +140,7 @@ def handle_client(conn, addr):
                     sendMessageList(message_list, client)
         except:
             break
+
     # When out of while loop disconnect client
     print(f"[DISCONNECTED] {addr} disconnected.")
     del client_list[conn]
