@@ -1,5 +1,6 @@
+# encode: utf-8
 """
-Créé le 4/10/23 à 13:00
+Created on 4/10/23 13:00
 
 @author: H, R
 """
@@ -19,12 +20,13 @@ def main():
         # Créer un client en utilisant l'identifiant fourni
         local_client = client.Client(login)
 
-        # Connecter le client au serveur
+        # Connect client to server
         local_client.connect()
 
         # Créer la fenêtre principale avec des dimensions spécifiées et le
         # client connecté
-        main_window = interface.WhatsDownMainWindow(480, 700, local_client)
+        main_window = interface.WhatsDownMainWindow(480,
+                                                    700, local_client)
 
     except Exception as e:
         # Gérer les exceptions et afficher un message d'erreur
