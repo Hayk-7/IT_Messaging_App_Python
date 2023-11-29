@@ -11,10 +11,6 @@ import interface
 if __name__ == '__main__':
     try:
         # Create the login page
-        # login_page = interface.WhatsDownLoginPage(480, 700)
-        # login = ""
-        # while login == "" or login.isspace():
-        #     login = login_page.login
         login = input("Enter your login: ")
 
         # Create a client
@@ -23,8 +19,8 @@ if __name__ == '__main__':
         localClient.connect()
 
         # Create the main window
-        interface = interface.WhatsDownMainWindow(480, 700, localClient)
+        main_window = interface.WhatsDownMainWindow(480, 700, localClient)
 
-    except Exception as e:
+    except Exception as e:  # If an exception occurs, print it and quit
         print(f"[EXCEPTION] {e} occurred")
         quit()
