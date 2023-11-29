@@ -1,6 +1,5 @@
-# encode: utf-8
 """
-Created on 4/10/23 13:00
+Créé le 4/10/23 à 13:00
 
 @author: H, R
 """
@@ -8,19 +7,31 @@ Created on 4/10/23 13:00
 import client
 import interface
 
-if __name__ == '__main__':
+
+def main():
+    """
+    Fonction principale pour exécuter le programme.
+    """
     try:
-        # Create the login page
-        login = input("Enter your login: ")
+        # Demander à l'utilisateur les informations de connexion
+        login = input("Entrez votre identifiant : ")
 
-        # Create a client
-        localClient = client.Client(login)
-        # Connect the client to the server
-        localClient.connect()
+        # Créer un client en utilisant l'identifiant fourni
+        local_client = client.Client(login)
 
-        # Create the main window
-        main_window = interface.WhatsDownMainWindow(480, 700, localClient)
+        # Connecter le client au serveur
+        local_client.connect()
 
-    except Exception as e:  # If an exception occurs, print it and quit
-        print(f"[EXCEPTION] {e} occurred")
+        # Créer la fenêtre principale avec des dimensions spécifiées et le
+        # client connecté
+        main_window = interface.WhatsDownMainWindow(480, 700, local_client)
+
+    except Exception as e:
+        # Gérer les exceptions et afficher un message d'erreur
+        print(f"[EXCEPTION] Une erreur s'est produite : {e}")
         quit()
+
+if __name__ == '__main__':
+    # Exécuter la fonction principale si le script est exécuté en tant que
+    # module principal
+    main()
