@@ -1,3 +1,30 @@
+"""
+    This class represents a client in the WhatsDown application.
+
+    Attributes:
+    - HEADERLEN: Length of the message header.
+    - FORMAT: Format (encoding) of the messages.
+    - DEFAULT_PORT: Default port number for communication.
+    - DISCONNECT_MESSAGE: Message to initiate a disconnect.
+    - SERVER: IP address of the server.
+    - listener: Thread for listening to incoming messages.
+    - login: Login information of the client.
+    - connected: Flag indicating if the client is connected.
+    - client: Socket object for communication.
+    - message_list: List to store all messages.
+    - newMessage: Flag indicating the presence of new messages.
+    - loadChatFile: Flag indicating the need to load the chat file.
+
+    Methods:
+    - __init__: Initializes the client with provided login.
+    - connect: Connects the client to the server and starts the listener thread.
+    - findServerSchool: Scans the local network for the server's IP address.
+    - findServerHome: Scans a home network for the server's IP address.
+    - send: Sends a message to the server.
+    - receive: Receives messages from the server and updates message_list.
+    - listen: Continuously listens for incoming messages from the server.
+    """
+
 import socket
 import threading
 import time
@@ -14,7 +41,6 @@ class Client:
         self.SERVER = None
 
         self.listener = None
-        self.sender = None
         self.login = LOGIN
         self.connected = None
 
@@ -27,7 +53,7 @@ class Client:
         self.loadChatFile = False
 
     def connect(self):
-        self.SERVER = self.findServerHome()
+        self.SERVER = self.findServerSchool()
 
         # Connect the socket to the port 6969
         self.client.connect((self.SERVER, self.DEFAULT_PORT))
@@ -50,7 +76,7 @@ class Client:
         s = time.time()
         for x1 in range(134, 136):
             for x2 in range(53, 55):
-                for x3 in range(100, 135):
+                for x3 in range(190, 255):
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     sock.settimeout(0.0001)
                     print(f"Trying: 10.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
@@ -135,5 +161,6 @@ class Client:
             self.newMessage = True
 
     def listen(self):
+        # Continuously listen for messages from the server
         while self.connected:
             self.receive()

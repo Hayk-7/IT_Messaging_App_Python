@@ -1,3 +1,32 @@
+"""
+server.py
+
+This module implements a simple chat server using sockets and threading.
+Clients can connect to the server, send and receive messages, and the server
+handles storing and retrieving messages between clients.
+
+Constants:
+- HEADERLEN: Information about the message to be received (in this case, the length of the message)
+- MSG: Represents a message type (0)
+- MSGLIST: Represents a message list type (1)
+- FORMAT: The format (encryption) of the message to be received
+- DISCONNECT_MESSAGE: Special message to disconnect from the server
+- DEFAULT_PORT: Default port number for the server
+- SERVER: IP address of the server
+- ADDR: Tuple containing the server IP address and port
+
+Functions:
+- sendMessage(msg, conn): Sends a single message to the specified connection.
+- sendMessageList(msg_list, conn): Sends a list of messages to the specified connection.
+- saveMessageList(msg_list): Saves the list of messages to a file named after the users in the conversation.
+- loadMessageList(users): Loads the list of messages from a file based on the users in the conversation.
+- handle_client(conn, addr): Handles communication with a connected client, managing message exchange and storage.
+- start(): Starts the server, listens for incoming connections, and handles each connection in a separate thread.
+
+Usage:
+- Run this script to start the chat server. Clients can connect to the server to exchange messages.
+"""
+
 import socket
 import threading
 import os.path

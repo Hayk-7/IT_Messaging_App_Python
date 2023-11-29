@@ -1,3 +1,38 @@
+"""
+This class represents the main window of the WhatsDown application.
+
+    Attributes:
+    - messages: List to store chat messages.
+    - background_image: PhotoImage object for the background.
+    - colorMe: Color code for messages sent by the local client.
+    - colorOther: Color code for messages sent by other clients.
+    - colorWarning: Color code for warning messages.
+    - colorError: Color code for error messages.
+    - text_color: Color code for text.
+    - localClient: Instance of the local client.
+    - screen_width: Width of the main window.
+    - screen_height: Height of the main window.
+    - input_box_height: Height of the input box.
+    - button_size: Size of the send button.
+    - title: Title of the main window.
+    - root: Tkinter root window.
+    - canvas: Canvas to hold the chat window.
+    - scrollbar: Scrollbar for the chat window.
+    - canvas_frame: Frame inside the canvas for displaying messages.
+
+    Methods:
+    - __init__: Initializes the main window and sets up its components.
+    - on_close: Safely disconnects the client and closes the program.
+    - onEnterPress: Handles the event when the Enter key is pressed.
+    - scroll: Updates the scrollbar and adjusts the scrolls the canvas.
+    - checkNewMessage: Checks for new messages at regular intervals.
+    - handleInput: Sends the input text to the server, handles commands and clears the input box.
+    - displayMessage: Displays a message in the chat window with appropriate formatting.
+    - displayMessageList: Displays a list of messages in the chat window.
+    - Fibonacci: Calculates the nth Fibonacci number recursively.
+
+"""
+
 import os.path  # Needed for .exe compilation
 import sys  # Needed for .exe compilation
 import tkinter as tk
@@ -15,7 +50,6 @@ def get_path(filename):
         return filename
 
 
-# !!! Work with CANVAS
 class WhatsDownMainWindow:
     def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, LOCALCLIENT):
         """"
@@ -23,10 +57,7 @@ class WhatsDownMainWindow:
         """
         # Initialize variables
         self.messages = []
-        self.input_text = None
-        self.background_label = None
         self.background_image = None
-        self.background_photo = None
         self.colorMe = "lightgreen"
         self.colorOther = "lightblue"
         self.colorWarning = "yellow"
@@ -163,23 +194,23 @@ class WhatsDownMainWindow:
         Sends the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
         """
-        self.input_text = self.input_box.get()  # Get input
+        input_text = self.input_box.get()  # Get input
         self.input_box.delete("0", tk.END)  # Clear input from beginning to end
 
         # Don't send if message is empty
-        if self.input_text == "" or self.input_text == " ":
+        if input_text == "" or input_text == " ":
             return
 
         # Check if message is a command
-        if self.input_text[0] == "/":
-            arguments = self.input_text.split()
+        if input_text[0] == "/":
+            arguments = input_text.split()
 
             # Disconnect client if client send the disconnect message
-            if self.input_text == self.localClient.DISCONNECT_MESSAGE:
+            if input_text == self.localClient.DISCONNECT_MESSAGE:
                 self.on_close()
 
             # Send the fibonacci sequence
-            elif self.input_text.startswith("/fibonacci"):
+            elif input_text.startswith("/fibonacci"):
                 # Handle case where user doesn't provide arguments
                 if len(arguments) < 2:
                     self.displayMessage(arguments[0] + " requires 1 argument (int)!", "Error")
@@ -197,6 +228,9 @@ class WhatsDownMainWindow:
                     self.displayMessage(arguments[0] + " requires an integer greater than 1!", "Error")
                     return
 
+                if n > 30:
+                    self.displayMessage(arguments[0] + " should not be larger than 30!", "Warning")
+
                 self.localClient.send(f"{n}th fibonacci number is: {self.Fibonacci(n)}")
 
             else:
@@ -205,7 +239,7 @@ class WhatsDownMainWindow:
 
         # If not a command send the message directly
         else:
-            self.localClient.send(self.input_text)
+            self.localClient.send(input_text)
 
     # Do we need the "where" argument since it's always the same?
     def displayMessage(self, message, who):
