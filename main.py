@@ -7,6 +7,7 @@ Créé le 4/10/23 à 13:00
 import client
 import interface
 
+
 def main():
     """
     Fonction principale pour exécuter le programme.
@@ -16,14 +17,14 @@ def main():
         login = input("Entrez votre identifiant : ")
 
         # Créer un client en utilisant l'identifiant fourni
-        localClient = client.Client(login)
+        local_client = client.Client(login)
 
         # Connecter le client au serveur
-        localClient.connect()
+        local_client.connect()
 
         # Créer la fenêtre principale avec des dimensions spécifiées et le
         # client connecté
-        main_window = interface.WhatsDownMainWindow(480, 700, localClient)
+        main_window = interface.WhatsDownMainWindow(480, 700, local_client)
 
     except Exception as e:
         # Gérer les exceptions et afficher un message d'erreur

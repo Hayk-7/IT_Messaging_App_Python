@@ -32,14 +32,13 @@ This class represents the main window of the WhatsDown application.
     - Fibonacci: Calculates the nth Fibonacci number recursively.
 
 """
-
 import os.path  # Needed for .exe compilation
 import sys  # Needed for .exe compilation
 import tkinter as tk
 from tkinter import ttk, Tk, Scrollbar
 from PIL import Image, ImageTk
 from datetime import datetime  # On peut ajouter l'heure de l'envoi du message
-
+import math
 
 # https://stackoverflow.com/questions/31836104/pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
 # get_path() Imported from link above, needed in order to use images for the standalone .exe
@@ -262,7 +261,9 @@ class WhatsDownMainWindow:
         elif who == "Warning":
             color = self.colorWarning
 
-        message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=1, bg=color)
+        desired_height = math.ceil(len(message) / 56)
+
+        message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3), height=desired_height, bg=color)
 
         message_text.insert(tk.END, f"{message}")
         message_text.config(state=tk.DISABLED)  # A comprendre?
