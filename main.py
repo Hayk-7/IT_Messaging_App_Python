@@ -33,6 +33,7 @@ def main():
         print(f"[EXCEPTION] Une erreur s'est produite : {e}")
         quit()
 
+
 if __name__ == '__main__':
     # Exécuter la fonction principale si le script est exécuté en tant que
     # module principal

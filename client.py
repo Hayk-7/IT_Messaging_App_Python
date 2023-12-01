@@ -67,7 +67,6 @@ class Client:
         """
         Connects the client to the server and starts the listener thread
         on specified port.
-        :return:
         """
         self.SERVER = self.findServerHome()
 
@@ -91,7 +90,7 @@ class Client:
     def findServerSchool(self):
         """
         Scans the school network for the server's IP address.
-        :return IP address of the server, if found.
+        returns IP address of the server, if found.
         """
         s = time.time()
         for x1 in range(134, 178):  # Testing range
@@ -112,15 +111,17 @@ class Client:
     def findServerHome(self):
         """
         Scans the home network for the server's IP address.
-        :return IP address of the server, if found.
+        returns IP address of the server, if found.
         """
         s = time.time()
         for x1 in range(30, 169):
             for x2 in range(32, 100):
                 for x3 in range(100):
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # Times out quickly if the server is not found
                     sock.settimeout(0.0001)
-                    print(f"Trying: 172.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
+                    print(f"[DEBUG] Trying: 172.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
+                    # Tries to connect to each server (bruteforce search)
                     result = sock.connect_ex((f"172.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
                     if result == 0:
                         e = time.time()
@@ -147,7 +148,6 @@ class Client:
     def receive(self):
         """
         Receives messages from the server and updates message_list.
-        :return:
         """
         # Get the type of message (0 -> message, 1 -> messageList)
         try:
@@ -189,6 +189,8 @@ class Client:
             self.newMessage = True
 
     def listen(self):
-        """Continuously listen for messages from the server"""
+        """
+        Continuously listen for messages from the server
+        """
         while self.connected:
             self.receive()

@@ -1,4 +1,11 @@
 """
+Code for the WhatsDown server side
+
+Created on Sun Nov 23 00:00:00 1000
+@author: H, R
+"""
+
+"""
 server.py
 
 This module implements a simple chat server using sockets and threading.
@@ -65,6 +72,10 @@ message_list = []
 
 
 def sendMessage(msg, conn):
+    """
+    Sends a message to the specified connection.
+    """
+
     # Encode the message
     message = msg.encode(FORMAT)
     # Get the length of the message
@@ -82,6 +93,10 @@ def sendMessage(msg, conn):
 
 
 def sendMessageList(msg_list, conn):
+    """
+    Sends the whole list of messages to the specified connection.
+    """
+
     # Get length of list
     list_length = len(msg_list)
     # Encode the length of the list
@@ -99,6 +114,10 @@ def sendMessageList(msg_list, conn):
 
 
 def saveMessageList(msg_list):
+    """
+    Saves the list of messages to a file named after the users in the conversation.
+    """
+
     # Get the users in the conversation
     users = [login for login in client_list.values()]
     users.sort()  # Sort the users alphabetically
@@ -111,6 +130,10 @@ def saveMessageList(msg_list):
 
 
 def loadMessageList(users):
+    """
+    Loads the list of messages from a file based on the users in the conversation.
+    """
+
     # Check if the file exists
     if not os.path.isfile(f"{'-'.join(users)}.txt"):
         return []
@@ -124,6 +147,10 @@ def loadMessageList(users):
 
 
 def handle_client(conn, addr):
+    """
+    Handles communication with a connected client, managing message exchange
+    """
+
     global client_list
     global message_list
     # Check if the client is permanent (not just a connection test)
@@ -187,6 +214,9 @@ def handle_client(conn, addr):
 
 
 def start():
+    """
+    Starts the server, listens for incoming connections, and handles each
+    """
     server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
