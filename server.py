@@ -6,7 +6,8 @@ Clients can connect to the server, send and receive messages, and the server
 handles storing and retrieving messages between clients.
 
 Constants:
-- HEADERLEN: Information about the message to be received (in this case, the length of the message)
+- HEADERLEN: Information about the message to be received
+(in this case, the length of the message)
 - MSG: Represents a message type (0)
 - MSGLIST: Represents a message list type (1)
 - FORMAT: The format (encryption) of the message to be received
@@ -17,21 +18,28 @@ Constants:
 
 Functions:
 - sendMessage(msg, conn): Sends a single message to the specified connection.
-- sendMessageList(msg_list, conn): Sends a list of messages to the specified connection.
-- saveMessageList(msg_list): Saves the list of messages to a file named after the users in the conversation.
-- loadMessageList(users): Loads the list of messages from a file based on the users in the conversation.
-- handle_client(conn, addr): Handles communication with a connected client, managing message exchange and storage.
-- start(): Starts the server, listens for incoming connections, and handles each connection in a separate thread.
+- sendMessageList(msg_list, conn): Sends a list of messages to the specified
+connection.
+- saveMessageList(msg_list): Saves the list of messages to a file named after
+the users in the conversation.
+- loadMessageList(users): Loads the list of messages from a file based on the
+users in the conversation.
+- handle_client(conn, addr): Handles communication with a connected client,
+managing message exchange and storage.
+- start(): Starts the server, listens for incoming connections, and handles
+each connection in a separate thread.
 
 Usage:
-- Run this script to start the chat server. Clients can connect to the server to exchange messages.
+- Run this script to start the chat server. Clients can connect to the server
+to exchange messages.
 """
 
 import socket
 import threading
 import os.path
 
-# HEADERLEN = Information about the message to be received (in this case, the length of the message)
+# HEADERLEN = Information about the message to be received (in this case,
+# the length of the message)
 HEADERLEN = 64
 # Send type -> 0 = message, 1 = messageList
 MSG = "0"
@@ -39,8 +47,8 @@ MSGLIST = "1"
 
 # FORMAT = The format (encryption) of the message to be received
 FORMAT = "utf-8"
-DISCONNECT_MESSAGE = "/dc"
-DEFAULT_PORT = 6969
+DISCONNECT_MESSAGE = "/dc"  # Message to disconnect from the server
+DEFAULT_PORT = 7070  # Default port number for the server
 
 # Get the IP address of the server
 SERVER = socket.gethostbyname(socket.gethostname())
@@ -49,7 +57,7 @@ ADDR = (SERVER, DEFAULT_PORT)
 # Socket = endpoint that receives data
 # Create a socket object (AF_INET = IPv4, SOCK_STREAM = TCP)
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# Bind the socket to the port 6969
+# Bind the socket to the port 7070
 server.bind(ADDR)
 
 client_list = {}
@@ -93,9 +101,10 @@ def sendMessageList(msg_list, conn):
 def saveMessageList(msg_list):
     # Get the users in the conversation
     users = [login for login in client_list.values()]
-    # Sort the users alphabetically
-    users.sort()
-    # Save the messages in a file, with the name of the file being the users in the conversation for easy access
+    users.sort()  # Sort the users alphabetically
+
+    # Save the messages in a file, with the name of the file
+    # being the users in the conversation for easy access
     with open(f"{'-'.join(users)}.txt", "w") as f:
         for login, msg in msg_list:
             f.write(f"{login}:{msg}\n")
@@ -123,7 +132,8 @@ def handle_client(conn, addr):
         return
     print(f"[NEW CONNECTION] {addr} connected.")
 
-    # Send data to the client (Data is sent under the form of bytes, so we need to encode it (using utf-8))
+    # Send data to the client (Data is sent under the form of bytes,
+    # so we need to encode it (using utf-8))
     conn.send(bytes(f"Connected to the server {ADDR}", FORMAT))
 
     # Get the client's login

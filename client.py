@@ -1,4 +1,17 @@
 """
+Code for the WhatsDown client side
+
+Created on Sun Nov 23 00:00:00 1000
+@author: H, R
+"""
+
+import socket
+import threading
+import time
+
+
+class Client:
+    """
     This class represents a client in the WhatsDown application.
 
     Attributes:
@@ -24,23 +37,21 @@
     - receive: Receives messages from the server and updates message_list.
     - listen: Continuously listens for incoming messages from the server.
     """
-
-import socket
-import threading
-import time
-
-
-class Client:
     def __init__(self, LOGIN):
+        """
+        Initializes the client with provided login.
+        :param LOGIN:
+        """
         # HEADERLEN = Information about the message to be received (in this case, the length of the message)
         self.HEADERLEN = 64
         # FORMAT = The format (encryption) of the messages
         self.FORMAT = "utf-8"
-        self.DEFAULT_PORT = 6969
+        self.DEFAULT_PORT = 7070
         self.DISCONNECT_MESSAGE = "/dc"
         self.SERVER = None
 
         self.listener = None
+        self.sender = None
         self.login = LOGIN
         self.connected = None
 
@@ -53,9 +64,14 @@ class Client:
         self.loadChatFile = False
 
     def connect(self):
-        self.SERVER = self.findServerSchool()
+        """
+        Connects the client to the server and starts the listener thread
+        on specified port.
+        :return:
+        """
+        self.SERVER = self.findServerHome()
 
-        # Connect the socket to the port 6969
+        # Connect the socket to the port 7070
         self.client.connect((self.SERVER, self.DEFAULT_PORT))
         self.client.send(bytes("PERMANENT", self.FORMAT))
         self.connected = True
@@ -73,10 +89,14 @@ class Client:
 
     # Scan local network for open port DEFAULT_PORT
     def findServerSchool(self):
+        """
+        Scans the school network for the server's IP address.
+        :return IP address of the server, if found.
+        """
         s = time.time()
-        for x1 in range(134, 136):
-            for x2 in range(53, 55):
-                for x3 in range(190, 255):
+        for x1 in range(134, 178):  # Testing range
+            for x2 in range(53,254):
+                for x3 in range(197, 250):
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     sock.settimeout(0.0001)
                     print(f"Trying: 10.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
@@ -90,19 +110,23 @@ class Client:
         print("No server found")
 
     def findServerHome(self):
+        """
+        Scans the home network for the server's IP address.
+        :return IP address of the server, if found.
+        """
         s = time.time()
-        for x1 in range(168, 169):
-            for x2 in range(100):
+        for x1 in range(30, 169):
+            for x2 in range(32, 100):
                 for x3 in range(100):
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     sock.settimeout(0.0001)
-                    print(f"Trying: 192.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
-                    result = sock.connect_ex((f"192.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
+                    print(f"Trying: 172.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
+                    result = sock.connect_ex((f"172.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
                     if result == 0:
                         e = time.time()
-                        print(f"Found: 192.{x1}.{x2}.{x3} in {e - s}s")
+                        print(f"Found: 172.{x1}.{x2}.{x3} in {e - s}s")
                         sock.close()
-                        return f"192.{x1}.{x2}.{x3}"
+                        return f"172.{x1}.{x2}.{x3}"
         sock.close()
         print("No server found")
 
@@ -121,6 +145,10 @@ class Client:
         self.client.send(message)
 
     def receive(self):
+        """
+        Receives messages from the server and updates message_list.
+        :return:
+        """
         # Get the type of message (0 -> message, 1 -> messageList)
         try:
             msg_type = int(self.client.recv(1).decode(self.FORMAT))
@@ -161,6 +189,6 @@ class Client:
             self.newMessage = True
 
     def listen(self):
-        # Continuously listen for messages from the server
+        """Continuously listen for messages from the server"""
         while self.connected:
             self.receive()
