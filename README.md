@@ -79,3 +79,10 @@ Vous avez maintenant toutes les ressources nécessaires.
 4. **Vous êtes prêt**:
    Ouvrez le code `main.py` et tournez le code.
    Enjoy your chat with whatsdown.
+
+
+## Commandes spéciales:
+
+Si vous commencez le messgae avec /, le code interpretera cela comme une commande spéciale.
+
+1. `/fibonacci`: comme son nom l'indeque,
