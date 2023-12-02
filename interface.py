@@ -2,6 +2,9 @@
 Code for the WhatsDown application interface
 Created on Tue Oct 23 19:44:37 1947
 @author: H, R
+
+Comment: if we do not specify the arguments of what a function returns,
+it is because it has no argument besides self or returns nothing.
 """
 import os.path  # Needed for .exe compilation
 import sys  # Needed for .exe compilation
@@ -116,13 +119,15 @@ class WhatsDownMainWindow:
 
         # If we don't put everything in one common frame,
         # the display is messed up
-        self.hold_all_in_one_frame = ttk.Frame(self.root,
-                                               height=self.screen_height)
+        self.hold_all_in_one_frame = tk.Frame(self.root,
+                                              height=self.screen_height)
+        # Show the frame
         self.hold_all_in_one_frame.pack(fill=tk.BOTH, expand=True)
 
         # Create a canvas to hold the chat window
         self.canvas = tk.Canvas(self.hold_all_in_one_frame,
                                 height=self.screen_height)
+        # Show the canvas on the previous frame
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Add scrollbar for when many messages go out of the screen
@@ -136,7 +141,12 @@ class WhatsDownMainWindow:
 
         # Create a frame inside the canvas to display the messages
         # We are not allowed to add window on canvas direclty
-        self.canvas_frame = tk.Frame(self.canvas, bg="blue")
+        self.canvas_frame = tk.Frame(self.canvas)
+
+        # This is the window which on which everything will be displayed
+        # A window has to be on a frame, not a canvas.
+        # It allows us to make the elements on it part of the canvas
+        # It means that the scrollbar will move everything.
         self.canvas.create_window((0, 0), window=self.canvas_frame,
                                   anchor="nw")
 
@@ -188,6 +198,7 @@ class WhatsDownMainWindow:
         Safely disconnects the client and ends the program
         """
         try:
+            # Sends the message to disconnect the client from server
             self.localClient.send(self.localClient.DISCONNECT_MESSAGE)
         except:
             pass
@@ -199,6 +210,9 @@ class WhatsDownMainWindow:
     def on_enter_press(self, event):
         """
         Activates when enter pressed to send the message.
+        Argument:
+            - event: not needed, but by default, the listener
+            sends the key which has been pressed
         """
         self.handle_input()
 
@@ -206,7 +220,7 @@ class WhatsDownMainWindow:
         """
         Updates the scrollbar and scrolls the canvas to the bottom
         when new message sent.
-        To function corrrctly, we have to update idletasks() before
+        To function correctly, we have to update idletasks() before
         and after the config() method.
         """
         self.canvas.update_idletasks()
@@ -220,18 +234,19 @@ class WhatsDownMainWindow:
         If there are new messages, display them.
         This function repeats itself every 100ms.
         """
-        # Check if the chat file ecists
+        # Check if the chat file exists
         if self.localClient.loadChatFile and self.localClient.newMessage:
-            self.display_message_list()
-            self.localClient.loadChatFile = False
-            self.localClient.newMessage = False
+            self.display_message_list()  # Displays the saved messages
+            self.localClient.loadChatFile = False  # Nothing more to do
+            self.localClient.newMessage = False  # No new message for the moment
 
         # Check if there are new messages
         if self.localClient.newMessage:
-            # Display the messages
+            # Display the last message from message_list
+            # which is stored in localClient
             self.display_message(self.localClient.message_list[-1][1],
                                  self.localClient.message_list[-1][0])
-            self.localClient.newMessage = False
+            self.localClient.newMessage = False  # No new message for the moment
 
         # Check again in 100ms
         self.root.after(100, self.check_new_message)
@@ -241,17 +256,18 @@ class WhatsDownMainWindow:
         """
         Sends the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
+        We return None just to exit the function.
         """
-        # Get input
+        # Get input in input box
         input_text = self.input_box.get()
         # Clear input from beginning to end
         self.input_box.delete("0", tk.END)
 
-        # Don't send if message is empty
+        # Don't send if the message content is empty
         if input_text == "" or input_text == " ":
             return
 
-        # Check if message is a command
+        # Check if the message is a command
         if input_text[0] == "/":
             arguments = input_text.split()
 
@@ -308,18 +324,19 @@ class WhatsDownMainWindow:
         """
         Displays a message in the chat window with appropriate formatting
         and color depending on who sent it.
-        :param message: content
-        :param who: sender
+        Arguments:
+            - message: content
+            - who: sender
         The message color is chosen according to who is the sender
         If something is wrong with the message send a red error message
         If our code isn't able to do something, the message will be yellow
         """
         # Creates the frame: the box which will contain all
         # the information of the message.
-        frame = ttk.Frame(self.canvas_frame)
+        frame = tk.Frame(self.canvas_frame)
         # Create a label in the frame to indicate sender's name
-        sender = ttk.Label(frame, text=f"{who} says:",
-                           font=("Comic Sans MS", 8, "italic"))
+        sender = tk.Label(frame, text=f"{who} says:",
+                          font=("Comic Sans MS", 8, "italic"))
         # Place the name at the top of the frame
         sender.grid(column=0, row=0, sticky="w")
         # Color of message content background
@@ -335,7 +352,8 @@ class WhatsDownMainWindow:
         # Calculate the height of the message (it is an approximation)
         desired_height = math.ceil(len(message) / 56)
 
-        # Create the text box
+        # Create the text box. We divide by 8.3 because screen_width
+        # is in pixels but width not.
         message_text = tk.Text(frame, wrap=tk.WORD,
                                width=int(self.screen_width / 8.3),
                                height=desired_height, bg=color)
