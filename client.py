@@ -44,8 +44,8 @@ class Client:
         Args:
         - LOGIN (str): The name of the file.
         """
-
-        # HEADERLEN = Information about the message to be received (in this case, the length of the message)
+        # HEADERLEN = Information about the message
+        # to be received (in this case, the length of the message)
         self.HEADERLEN = 64
         # FORMAT = The format (encryption) of the messages
         self.FORMAT = "utf-8"
