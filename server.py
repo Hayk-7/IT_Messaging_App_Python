@@ -1,11 +1,9 @@
 """
-Code for the WhatsDown server side
+Code for the WhatsDown server side.
 
 Created on Sun Nov 23 00:00:00 1000
 @author: H, R
-"""
 
-"""
 server.py
 
 This module implements a simple chat server using sockets and threading.
@@ -31,7 +29,7 @@ connection.
 the users in the conversation.
 - loadMessageList(users): Loads the list of messages from a file based on the
 users in the conversation.
-- handle_client(conn, addr): Handles communication with a connected client,
+- handleClient(conn, addr): Handles communication with a connected client,
 managing message exchange and storage.
 - start(): Starts the server, listens for incoming connections, and handles
 each connection in a separate thread.
@@ -74,6 +72,10 @@ message_list = []
 def sendMessage(msg, conn):
     """
     Sends a message to the specified connection.
+
+    Arguments:
+        - msg: message
+        - conn:  # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI
     """
 
     # Encode the message
@@ -95,6 +97,10 @@ def sendMessage(msg, conn):
 def sendMessageList(msg_list, conn):
     """
     Sends the whole list of messages to the specified connection.
+
+    Arguments:
+        - msg_list: list of all messages
+        - conn: # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI
     """
 
     # Get length of list
@@ -115,7 +121,11 @@ def sendMessageList(msg_list, conn):
 
 def saveMessageList(msg_list):
     """
-    Saves the list of messages to a file named after the users in the conversation.
+    Saves the list of messages to a file named after
+    the users in the conversation.
+
+    Argument:
+        - msg_list: list of all messages
     """
 
     # Get the users in the conversation
@@ -131,9 +141,12 @@ def saveMessageList(msg_list):
 
 def loadMessageList(users):
     """
-    Loads the list of messages from a file based on the users in the conversation.
-    """
+    Loads the list of messages from a file based on
+    the users in the conversation.
 
+    Argument:
+        - users: name of all users
+    """
     # Check if the file exists
     if not os.path.isfile(f"{'-'.join(users)}.txt"):
         return []
@@ -146,11 +159,16 @@ def loadMessageList(users):
         return msg_list
 
 
-def handle_client(conn, addr):
+def handleClient(conn, addr):
     """
     Handles communication with a connected client, managing message exchange
-    """
 
+    Arguments:
+        - conn:  # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI
+        - addr:  # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI
+    Return:
+        - None: just exit the function
+    """
     global client_list
     global message_list
     # Check if the client is permanent (not just a connection test)
@@ -188,7 +206,8 @@ def handle_client(conn, addr):
                 # Receive data from the client
                 msg = conn.recv(int(msg_length)).decode(FORMAT)
 
-                # If the client sends the DISCONNECT_MESSAGE, disconnect the client
+                # If the client sends the DISCONNECT_MESSAGE,
+                # disconnect the client
                 if msg == DISCONNECT_MESSAGE:
                     break
 
@@ -215,7 +234,7 @@ def handle_client(conn, addr):
 
 def start():
     """
-    Starts the server, listens for incoming connections, and handles each
+    Starts the server, listens for incoming connections, and handles each.
     """
     server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
@@ -223,7 +242,7 @@ def start():
         # Accept the connection from the client
         conn, address = server.accept()
         # Create a thread for each client (to handle multiple clients)
-        thread = threading.Thread(target=handle_client, args=(conn, address))
+        thread = threading.Thread(target=handleClient, args=(conn, address))
         thread.start()
 
 
