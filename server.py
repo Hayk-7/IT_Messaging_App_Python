@@ -53,7 +53,7 @@ MSGLIST = "1"
 # FORMAT = The format (encryption) of the message to be received
 FORMAT = "utf-8"
 DISCONNECT_MESSAGE = "/dc"  # Message to disconnect from the server
-DEFAULT_PORT = 7070  # Default port number for the server
+DEFAULT_PORT = 6969  # Default port number for the server
 
 # Get the IP address of the server
 SERVER = socket.gethostbyname(socket.gethostname())

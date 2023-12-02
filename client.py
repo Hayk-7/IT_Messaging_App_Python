@@ -63,15 +63,28 @@ class Client:
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.message_list = []
-        self.newMessage = False
-        self.loadChatFile = False
+        self.new_message = False
+        self.load_chat_file = False
 
     def connect(self):
         """
         Connects the client to the server and starts the listener thread
         on specified port.
         """
-        self.SERVER = self.findServerHome()
+
+        findServer = input("1) Scan for the server? \n2) Enter IP address? \n")
+        if findServer == "1":
+            self.SERVER = self.findServerHome()
+        else:
+            result = 1
+            while result != 0:
+                self.SERVER = input("Enter IP address (10.xxx.xxx.xxx): ")
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                # Times out quickly if the server is not found
+                sock.settimeout(0.0001)
+                print(f"[DEBUG] Trying: {self.SERVER}:{self.DEFAULT_PORT}")
+                # Tries to connect to the server
+                result = sock.connect_ex((self.SERVER, self.DEFAULT_PORT))
 
         # Connect the socket to the port 6969
         self.client.connect((self.SERVER, self.DEFAULT_PORT))
@@ -80,7 +93,7 @@ class Client:
 
         # Get connected message from the server
         msg = self.client.recv(128)
-        print(msg.decode(self.FORMAT))
+        print("[INFO] " + msg.decode(self.FORMAT))
 
         self.client.send(bytes(self.login, self.FORMAT))
 
@@ -132,7 +145,7 @@ class Client:
                     result = sock.connect_ex((ip, self.DEFAULT_PORT))
                     if result == 0:
                         e = time.time()
-                        print(f"Found:{ip} in {e - s}s")
+                        print(f"[INFO] Found: {ip} in {e - s}s")
                         sock.close()
                         return ip
         sock.close()
@@ -167,7 +180,7 @@ class Client:
                 # Receive data from the server
                 msg = self.client.recv(msg_length).decode(self.FORMAT)
                 if msg == "LoadChatFile":
-                    self.loadChatFile = True
+                    self.load_chat_file = True
         elif msg_type == 1:
             # Empty the message list
             self.message_list = []
@@ -193,7 +206,7 @@ class Client:
                 self.message_list.append((login, msg))
 
             # Set newMessage to True so that the interface can display the messages
-            self.newMessage = True
+            self.new_message = True
 
     def listen(self):
         """

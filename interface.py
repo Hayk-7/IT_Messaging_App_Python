@@ -233,18 +233,18 @@ class WhatsDownMainWindow:
         This function repeats itself every 100ms.
         """
         # Check if the chat file exists
-        if self.local_client.load_chat_file and self.local_client.newMessage:
+        if self.local_client.load_chat_file and self.local_client.new_message:
             self.display_message_list()  # Displays the saved messages
             self.local_client.load_chat_file = False
-            self.local_client.newMessage = False
+            self.local_client.new_message = False
 
         # Check if there are new messages
-        if self.local_client.newMessage:
+        if self.local_client.new_message:
             # Display the last message from message_list
             # which is stored in localClient
             self.display_message(self.local_client.message_list[-1][1],
                                  self.local_client.message_list[-1][0])
-            self.local_client.newMessage = False
+            self.local_client.new_message = False
 
         # Check again in 100ms
         self.root.after(100, self.check_new_message)
