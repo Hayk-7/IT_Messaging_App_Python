@@ -10,8 +10,6 @@ from tkinter import ttk, Tk, Scrollbar
 from PIL import Image, ImageTk
 from datetime import datetime  # To add the time of the message
 import time
-
-from datetime import datetime  # On peut ajouter l'heure de l'envoi du message
 import math
 
 
