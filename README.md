@@ -2,14 +2,17 @@
 # Chat Python - Client et Serveur
 
 ## Introduction
-Ce projet est une interface tkinter qui permet d'envoyer des messages entre différents appareils sur un même réseau.
-Il est composé de 3 fichiers python: main.py, client.py et server.py.
+Ceci est notre projet de semestrielle qui permet d'envoyer des messages entre différents appareils sur un même réseau.
+Il est composé de 4 fichiers python: main.py, interface.py, client.py et server.py.
 
 ## Main.py
-Le fichier `main.py` contient le code local du chat. C'est le code que chaque personne doit avoir pour utiliser le chat. Il contient l'interface graphique et traite la réception de message pour les afficher ensuite.
 
-1. 
+Le fichier `main.py` est le système de contrôle. C'est le code que chaque personne doit avoir pour utiliser le chat.
+Tout d'abord, il demande le login et ensuite, il ouvre la fenêtre du chat.
 
+## Interface.py
+
+Ce ficher traite l'affichage de la fenêtre
 
 ## Client.py
 
@@ -49,4 +52,37 @@ Le fichier `server.py` contient le code pour le serveur du chat.
 
 8. **Boucle principale** : Dans la boucle principale, le serveur accepte les connexions entrantes avec `server_socket.accept()`. Lorsqu'un client se connecte, son socket est ajouté à la liste `clients`, et un thread est créé pour gérer ce client avec la fonction `handle_client`.
 
-En résumé, le client.py permet à un utilisateur d'envoyer des messages au serveur, tandis que le server.py gère les connexions clientes, reçoit les messages des clients et les redistribue à tous les clients connectés. Le serveur peut gérer plusieurs clients en même temps grâce à l'utilisation de threads. Ce code forme la base d'un chat simple en Python, que vous pouvez développer davantage pour ajouter des fonctionnalités et améliorer la convivialité.
+
+## Utilisation
+
+Il y a 4 choses à configurer avant de pouvoir utiliser le code correctement:
+
+- Installer les modules non présent sur l'ordinateu
+- Lancer le serveur
+- Corriger l'addresse IP
+- Lancer le code 
+
+1. **Installation des fichiers de base** : 
+  Dans notre projet, beaucoup de modules sont utilisés: os, sys, tkinter, PIL (pillow), datetime, time, math, socket et threading.
+  La plupart sont installés par défaut, mais PIL ne l'est pas. Pour l'avoir, dans un terminal, écrivez:
+  `pip install pillow`
+
+Vous avez maintenant toutes les ressources nécessaires.
+
+2. **Activation du server**:
+   Avant de démarrer l'interface, il faut activer le serveur. Sinon, on ne pourra pas communiquer les messages d'un ordinateur à un autre.
+  **ATTENTION: POUR UTILISER CETTE APP, LES UTILISATEURS DOIVENT TOUS ÊTRE SUR LE MÊME RÉSEAU.**
+   Pour démarrer le serveur, ouvrez simplement le fichier `server.py` et faites tourner le code **sur un seul des ordinateurs du résaux**
+
+3. **Correction de l'addresse IP**:
+
+4. **Vous êtes prêt**:
+   Ouvrez le code `main.py` et tournez le code.
+   Enjoy your chat with whatsdown.
+
+
+## Commandes spéciales:
+
+Si vous commencez le messgae avec /, le code interpretera cela comme une commande spéciale.
+
+1. `/fibonacci`: comme son nom l'indeque,
