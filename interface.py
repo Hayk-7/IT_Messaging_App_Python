@@ -1,5 +1,6 @@
 """
-Code for the WhatsDown application interface
+Code for the WhatsDown application interface.
+
 Created on Tue Oct 23 19:44:37 1947
 @author: H, R
 
@@ -11,19 +12,19 @@ import sys  # Needed for .exe compilation
 import tkinter as tk
 import math
 import time  # For debugging
-from PIL import Image, ImageTk
-from tkinter import Tk, Scrollbar
 from datetime import datetime  # To add the time of the message
+from tkinter import Tk, Scrollbar
+from PIL import Image, ImageTk
 
 
 def get_path(filename):
     """
     https://stackoverflow.com/questions/31836104/
     pyinstaller-and-onefile-how-to-include-an-image-in-the-exe-file
-    get_path() Imported from link above, needed in order to use
+    get_path() imported from link above, needed in order to use
     images for the standalone .exe
 
-    Returns the path for the given filename, considering .exe compilation.
+    Return the path for the given filename, considering .exe compilation.
 
     Args:
     - filename (str): The name of the file.
@@ -75,7 +76,7 @@ class WhatsDownMainWindow:
 
     def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, LOCAL_CLIENT):
         """
-        Creates the main application window.
+        Create the main application window.
 
         Args:
         - WINDOW_WIDTH: Width of the main window.
@@ -192,8 +193,9 @@ class WhatsDownMainWindow:
 
     def on_close(self):
         """
-        Called when pressing the "X" to close the window
-        Safely disconnects the client and ends the program
+        Called when pressing the "X" to close the window.
+
+        Safely disconnects the client and ends the program.
         """
         try:
             # Sends the message to disconnect the client from server
@@ -208,6 +210,7 @@ class WhatsDownMainWindow:
     def on_enter_press(self, event):
         """
         Activates when enter pressed to send the message.
+
         Argument:
             - event: not needed, but by default, the listener
             sends the key which has been pressed
@@ -216,8 +219,9 @@ class WhatsDownMainWindow:
 
     def scroll(self):
         """
-        Updates the scrollbar and scrolls the canvas to the bottom
+        Update the scrollbar and scrolls the canvas to the bottom
         when new message sent.
+
         To function correctly, we have to update idletasks() before
         and after the config() method.
         """
@@ -230,13 +234,13 @@ class WhatsDownMainWindow:
         """
         If the chat file was found, display the messages.
         If there are new messages, display them.
+
         This function repeats itself every 100ms.
         """
         # Check if the chat file exists
         if self.local_client.loadChatFile and self.local_client.newMessage:
             self.display_message_list()  # Displays the saved messages
-            self.local_client.loadChatFile = False  # Nothing more to do
-            # No new message for the moment
+            self.local_client.loadChatFile = False
             self.local_client.newMessage = False
 
         # Check if there are new messages
@@ -245,7 +249,6 @@ class WhatsDownMainWindow:
             # which is stored in localClient
             self.display_message(self.local_client.message_list[-1][1],
                                  self.local_client.message_list[-1][0])
-            # No new message for the moment
             self.local_client.newMessage = False
 
         # Check again in 100ms
@@ -254,7 +257,7 @@ class WhatsDownMainWindow:
     # Handles the input
     def handle_input(self):
         """
-        Sends the input text to the server and doesn't display it.
+        Send the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
         We return None just to exit the function.
         """
@@ -286,7 +289,7 @@ class WhatsDownMainWindow:
 
                 # Handle case where user doesn't provide an integer
                 try:
-                    n = int(arguments[1])
+                    num = int(arguments[1])
                 except ValueError:
                     self.display_message(arguments[0] +
                                          " requires an int as an argument !",
@@ -295,20 +298,20 @@ class WhatsDownMainWindow:
 
                 # Handle case where user inputs invalid integer
                 # (less than 1 or more than 30)
-                if n < 0:
+                if num < 0:
                     self.display_message(arguments[0] +
                                          " requires a positive integer !",
                                          "Error")
                     return
                 # Handle case where user inputs a too big integer
-                if n > 30:
+                if num > 30:
                     self.display_message(arguments[0] +
                                          " requires an int smaller than 31 !",
                                          "Warning")
                     return
 
-                self.local_client.send(f"The fibonacci number {n} is:"
-                                      f" {self.fibonacci(n)}")
+                self.local_client.send(f"The fibonacci number {num} is:"
+                                       f"{self.fibonacci(num)}")
 
             else:  # If command not found, display error message
                 self.display_message(arguments[0] + " | Command not found!",
@@ -322,8 +325,9 @@ class WhatsDownMainWindow:
     # Do we need the "where" argument since it's always the same?
     def display_message(self, message, who):
         """
-        Displays a message in the chat window with appropriate formatting
+        Display a message in the chat window with appropriate formatting
         and color depending on who sent it.
+
         Arguments:
             - message: content
             - who: sender
@@ -373,39 +377,36 @@ class WhatsDownMainWindow:
         self.scroll()
 
     def display_message_list(self):
-        """
-        Displays all the messages in the message list at once.
-        """
+        """Display all the messages in the message list at once."""
         # Get the list from server
         messages = self.local_client.message_list
         # Display the messages in order, one by one
         for login, msg in messages:
             self.display_message(msg, login)
 
-    def fibonacci(self, n):
+    def fibonacci(self, num):
         """
         Calculate recursively the n-th number of
         the fibonacci sequence. It is a terminal recursion,
         therefore, we did a basic fibonacci function which
         takes too much time for n > 30.
         """
-        if n == 0 or n == 1:  # Initial case
-            return n
+        if num in (0, 1):  # Initial case
+            return num
 
-        return self.fibonacci(n - 1) + self.fibonacci(n - 2)
+        return self.fibonacci(num - 1) + self.fibonacci(num - 2)
 
 
 class WhatsDownLoginPage:
     """
-    This class is not in use yet
-    Pre-made for future, more sophisticated verions of the app
+    This class is not in use yet.
+    Pre-made for future, more sophisticated versions of the app.
     """
-    def __init__(self, SIZEX, SIZEY):
-        """
-        Crée la page de connexion de l'application avec les valeurs de défaut
-        """
+
+    def __init__(self, SIZE_X, SIZE_Y):
+        """Crée la page de connexion de l'application avec les valeurs de défaut."""
         self.root = Tk()
-        self.root.geometry(f"{SIZEX}x{SIZEY}")
+        self.root.geometry(f"{SIZE_X}x{SIZE_Y}")
         self.root.title("WhatsDown! - Login")
         self.root.iconbitmap("icon.ico")
 
@@ -414,7 +415,5 @@ class WhatsDownLoginPage:
         self.root.mainloop()
 
     def get_login(self):
-        """
-        Renvoie le nom d'utilisateur saisi.
-        """
+        """Send the username given in terminal."""
         return self.login
