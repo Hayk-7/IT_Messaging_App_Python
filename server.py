@@ -55,7 +55,7 @@ MSGLIST = "1"
 # FORMAT = The format (encryption) of the message to be received
 FORMAT = "utf-8"
 DISCONNECT_MESSAGE = "/dc"  # Message to disconnect from the server
-DEFAULT_PORT = 7070  # Default port number for the server
+DEFAULT_PORT = 6969  # Default port number for the server
 
 # Get the IP address of the server
 SERVER = socket.gethostbyname(socket.gethostname())
@@ -64,7 +64,7 @@ ADDR = (SERVER, DEFAULT_PORT)
 # Socket = endpoint that receives data
 # Create a socket object (AF_INET = IPv4, SOCK_STREAM = TCP)
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# Bind the socket to the port 7070
+# Bind the socket to the port 6969
 server.bind(ADDR)
 
 client_list = {}
@@ -126,7 +126,7 @@ def saveMessageList(msg_list):
     # being the users in the conversation for easy access
     with open(f"{'-'.join(users)}.txt", "w") as f:
         for login, msg in msg_list:
-            f.write(f"{login}:{msg}\n")
+            f.write(f"{login}[:::]{msg}\n")
 
 
 def loadMessageList(users):
@@ -141,7 +141,7 @@ def loadMessageList(users):
     with open(f"{'-'.join(users)}.txt", "r") as f:
         msg_list = []
         for line in f.readlines():
-            login, msg = line.split(":")
+            login, msg = line.split("[:::]")
             msg_list.append([login, msg.strip()])
         return msg_list
 
