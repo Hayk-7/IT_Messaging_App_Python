@@ -7,7 +7,7 @@ import os.path  # Needed for .exe compilation
 import random
 import sys  # Needed for .exe compilation
 import tkinter as tk
-from tkinter import ttk, Tk, Scrollbar
+from tkinter import Tk, Scrollbar
 from PIL import Image, ImageTk
 import math
 
@@ -43,7 +43,7 @@ class WhatsDownMainWindow:
     - colorMe: Color code for messages sent by the local client.
     - colorOther: Color code for messages sent by other clients.
     - colorWarning: Color code for warning messages.
-    - color_error: Color code for error messages.
+    - colorError: Color code for error messages.
     - text_color: Color code for text.
     - localClient: Instance of the local client.
     - screen_width: Width of the main window.
@@ -70,7 +70,7 @@ class WhatsDownMainWindow:
     - fibonacci: Calculates the nth Fibonacci number recursively.
     """
 
-    def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, LOCAL_CLIENT):
+    def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, LOCALCLIENT):
         """
         Creates the main application window.
 
@@ -82,12 +82,12 @@ class WhatsDownMainWindow:
         # Initialize the variables
         self.messages = []
         self.background_image = None
-        self.color_me = "lightgreen"
-        self.clients_colors = {}
-        self.color_warning = "yellow"
-        self.color_error = "red"
+        self.colorMe = "lightgreen"
+        self.colorOther = "lightblue"
+        self.colorWarning = "yellow"
+        self.colorError = "red"
         self.text_color = "black"
-        self.local_client = LOCAL_CLIENT
+        self.localClient = LOCALCLIENT
 
         # Set window width and height
         self.screen_width = WINDOW_WIDTH
@@ -98,7 +98,7 @@ class WhatsDownMainWindow:
         self.button_size = self.input_box_height  # Set the send button size
 
         # Set window title
-        self.title = f"Whatsdown! Logged in as: {self.local_client.login}"
+        self.title = f"Whatsdown! Logged in as: {self.localClient.login}"
 
         # Create the main application window
         self.root = Tk()
@@ -106,18 +106,24 @@ class WhatsDownMainWindow:
         # Set window size and open the window in the center of the screen
         self.root.geometry(
             f"{self.screen_width}x{self.screen_height}+"
-            f"{int(self.root.winfo_screenwidth() / 2 - self.screen_width / 2)}+{0}")
+            f"{int(self.root.winfo_screenwidth() / 2 - self.screen_width / 2)}"
+            f"+{0}")
 
         # Set window title and icon
         self.root.title(self.title)
         self.root.iconbitmap(get_path("icon.ico"))
 
-        # If we don't put everything in one common frame, the display is messed up
-        self.hold_all_in_one_frame = ttk.Frame(self.root, height=self.screen_height)
+        # If we don't put everything in one common frame,
+        # the display is messed up
+        self.hold_all_in_one_frame = tk.Frame(self.root,
+                                              height=self.screen_height)
+        # Show the frame
         self.hold_all_in_one_frame.pack(fill=tk.BOTH, expand=True)
 
         # Create a canvas to hold the chat window
-        self.canvas = tk.Canvas(self.hold_all_in_one_frame, height=self.screen_height)
+        self.canvas = tk.Canvas(self.hold_all_in_one_frame,
+                                height=self.screen_height)
+        # Show the canvas on the previous frame
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Add scrollbar for when many messages go out of the screen
@@ -155,9 +161,11 @@ class WhatsDownMainWindow:
                 (int(self.button_size * 0.8), int(self.button_size * 1)),
                 Image.BOX))
         # Create the send button and add the image on it
-        self.send_button = tk.Button(self.root, height=int(self.button_size * 0.8),
+        self.send_button = tk.Button(self.root,
+                                     height=int(self.button_size * 0.8),
                                      width=int(self.button_size * 1),
-                                     image=send_icon, command=lambda: self.handle_input())
+                                     image=send_icon,
+                                     command=lambda: self.handle_input())
         # Show the send button
         self.send_button.pack(side=tk.LEFT)
 
@@ -165,7 +173,7 @@ class WhatsDownMainWindow:
         # Configure the scroll region => the scroll bar will be updated
         # when new messages are added
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
-        self.scroll() # Scroll to the bottom of the canvas in the beginning
+        self.scroll()  # Scroll to the bottom of the canvas in the beginning
 
         # Add the event listener for when the user closes the window
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -181,11 +189,12 @@ class WhatsDownMainWindow:
         Safely disconnects the client and ends the program
         """
         try:
-            self.local_client.send(self.local_client.DISCONNECT_MESSAGE)
+            # Sends the message to disconnect the client from server
+            self.localClient.send(self.localClient.DISCONNECT_MESSAGE)
         except:
             pass
-        self.local_client.connected = False
-        self.local_client.client.close()
+        self.localClient.connected = False
+        self.localClient.client.close()
         self.root.destroy()  # To close the window
         quit()
 
@@ -213,17 +222,19 @@ class WhatsDownMainWindow:
         If there are new messages, display them.
         This function repeats itself every 100ms.
         """
-        # Check if the chat file ecists
-        if self.local_client.loadChatFile and self.local_client.newMessage:
-            self.display_message_list()
-            self.local_client.loadChatFile = False
-            self.local_client.newMessage = False
+        # Check if the chat file exists
+        if self.localClient.loadChatFile and self.localClient.newMessage:
+            self.display_message_list()  # Displays the saved messages
+            self.localClient.loadChatFile = False
+            self.localClient.newMessage = False
 
         # Check if there are new messages
-        if self.local_client.newMessage:
-            # Display the messages
-            self.display_message(self.local_client.message_list[-1][1], self.local_client.message_list[-1][0])
-            self.local_client.newMessage = False
+        if self.localClient.newMessage:
+            # Display the last message from message_list
+            # which is stored in localClient
+            self.display_message(self.localClient.message_list[-1][1],
+                                 self.localClient.message_list[-1][0])
+            self.localClient.newMessage = False
 
         # Check again in 100ms
         self.root.after(100, self.check_new_message)
@@ -234,96 +245,116 @@ class WhatsDownMainWindow:
         Sends the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
         """
-        input_text = self.input_box.get()  # Get input
-        self.input_box.delete("0", tk.END)  # Clear input from beginning to end
+        # Get input in input box
+        input_text = self.input_box.get()
+        # Clear input from beginning to end
+        self.input_box.delete("0", tk.END)
 
-        # Don't send if message is empty
+        # Don't send if the message content is empty
         if input_text == "" or input_text == " ":
             return
 
-        # Check if message is a command
+        # Check if the message is a command
         if input_text[0] == "/":
             arguments = input_text.split()
 
             # Disconnect client if client send the disconnect message
-            if input_text == self.local_client.DISCONNECT_MESSAGE:
+            if input_text == self.localClient.DISCONNECT_MESSAGE:
                 self.on_close()
 
             # Send the fibonacci sequence
             elif input_text.startswith("/fibonacci"):
                 # Handle case where user doesn't provide arguments
                 if len(arguments) < 2:
-                    self.display_message(arguments[0] + " requires 1 argument (int)!", "Error")
+                    self.display_message(arguments[0] +
+                                         " requires 1 argument (int)!",
+                                         "Error")
                     return
 
                 # Handle case where user doesn't provide an integer
                 try:
                     n = int(arguments[1])
                 except ValueError:
-                    self.display_message(arguments[0] + " requires an integer as an argument!", "Error")
+                    self.display_message(arguments[0] +
+                                         " requires an int as an argument !",
+                                         "Error")
                     return
 
                 # Handle case where user inputs invalid integer
                 # (less than 1 or more than 30)
                 if n < 0:
-                    self.display_message(arguments[0] + " requires a positive integer as an argument!", "Error")
+                    self.display_message(arguments[0] +
+                                         " requires a positive integer !",
+                                         "Error")
                     return
                 # Handle case where user inputs a too big integer
                 if n > 30:
-                    self.display_message(arguments[0] + " should not receive an integer greater than 30 as an argument!", "Warning")
+                    self.display_message(arguments[0] +
+                                         " requires an int smaller than 31 !",
+                                         "Warning")
                     return
 
-                self.local_client.send(f"The fibonacci number {n} is: {self.fibonacci(n)}")
+                self.localClient.send(f"The fibonacci number {n} is:"
+                                      f" {self.fibonacci(n)}")
 
             else:  # If command not found, display error message
-                self.display_message(arguments[0] + " | Command not found!", "Error")
+                self.display_message(arguments[0] + " | Command not found!",
+                                     "Error")
                 return
 
         # If not a command send the message directly
         else:
-            self.local_client.send(input_text)
+            self.localClient.send(input_text)
 
     # Do we need the "where" argument since it's always the same?
     def display_message(self, message, who):
         """
         Displays a message in the chat window with appropriate formatting
         and color depending on who sent it.
-        :param message: content
-        :param who: sender
+        Arguments:
+            - message: content
+            - who: sender
+        The message color is chosen according to who is the sender
+        If something is wrong with the message send a red error message
+        If our code isn't able to do something, the message will be yellow
         """
-        frame = ttk.Frame(self.canvas_frame)
-        sender = ttk.Label(frame, text=f"{who} says:", font=("Comic Sans MS", 8, "italic"))
+        # Creates the frame: the box which will contain all
+        # the information of the message.
+        frame = tk.Frame(self.canvas_frame)
+        # Create a label in the frame to indicate sender's name
+        sender = tk.Label(frame, text=f"{who} says:",
+                          font=("Comic Sans MS", 8, "italic"))
+        # Place the name at the top of the frame
         sender.grid(column=0, row=0, sticky="w")
+        # Color of message content background
+        color = self.colorOther
 
-        if who == self.local_client.login:
-            color = self.color_me
+        if who == self.localClient.login:
+            color = self.colorMe
         elif who == "Error":
-            color = self.color_error
+            color = self.colorError
         elif who == "Warning":
-            color = self.color_warning
-        else:
-            # Check's if the client has already been assigned a color
-            if who not in self.clients_colors.keys():
-                # If not, assign a random color
-                rand_color = random.choice(["blue", "lightblue", "pink", "orange", "azure"])
-                while rand_color in self.clients_colors.values():
-                    rand_color = random.choice(["blue", "lightblue", "pink", "orange", "azure"])
-                self.clients_colors[who] = rand_color
-            color = self.clients_colors[who]
+            color = self.colorWarning
 
         # Calculate the height of the message (it is an approximation)
         desired_height = math.ceil(len(message) / 56)
 
-        # Create the text box
-        message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3),
+        # Create the text box. We divide by 8.3 because screen_width
+        # is in pixels but width not.
+        message_text = tk.Text(frame, wrap=tk.WORD,
+                               width=int(self.screen_width / 8.3),
                                height=desired_height, bg=color)
 
+        # Add the message at the end of the text box
         message_text.insert(tk.END, f"{message}")
         #  We can't modify the text after it is sent
         message_text.config(state=tk.DISABLED)
-        message_text.grid(column=0, row=1, sticky="w")  # TO BE COMMENTED GRIIID
-        frame.grid(column=0, row=self.canvas_frame.grid_size()[1], sticky="w")
-        self.canvas_frame.grid_columnconfigure(0, weight=1)
+        # To avoid overlapping sender's name, we set the row to 1.
+        message_text.grid(column=0, row=1, sticky="w")
+        # Place the frame in the grid layout, adjusting the row to 
+        # avoid overlap.
+        # The row increments automatically.
+        frame.grid(column=0, row=self.canvas_frame.grid_size()[1])
 
         # Scroll to the bottom of the canvas to see the new message
         self.scroll()
@@ -332,9 +363,9 @@ class WhatsDownMainWindow:
         """
         Affiche la liste des messages dans la fenêtre.
         """
-        # Prend la liste de messages du serveur
-        messages = self.local_client.message_list
-        # Affiche les messages un par un
+        # Get the list from server
+        messages = self.localClient.message_list
+        # Display the messages in order, one by one
         for login, msg in messages:
             self.display_message(msg, login)
 
@@ -353,6 +384,7 @@ class WhatsDownLoginPage:
     This class is not in use yet
     Pre-made for future, more sophisticated verions of the app
     """
+
     def __init__(self, SIZEX, SIZEY):
         """
         Crée la page de connexion de l'application avec les valeurs de défaut
