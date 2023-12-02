@@ -322,8 +322,7 @@ class WhatsDownMainWindow:
         # the information of the message.
         frame = tk.Frame(self.canvas_frame)
         # Create a label in the frame to indicate sender's name
-        sender = tk.Label(frame, text=f"{who} says:",
-                          font=("Comic Sans MS", 8, "italic"))
+        sender = tk.Label(frame, text=f"{who} says:", font=("Comic Sans MS", 8, "italic"))
         # Place the name at the top of the frame
         sender.grid(column=0, row=0, sticky="w")
         # Color of message content background
