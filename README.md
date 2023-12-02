@@ -71,7 +71,7 @@ Vous avez maintenant toutes les ressources nécessaires.
 
 2. **Activation du server**:
    Avant de démarrer l'interface, il faut activer le serveur. Sinon, on ne pourra pas communiquer les messages d'un ordinateur à un autre.
-  **ATTENTION: POUR UTILISER CETTE APP, LES UTILISATEURS DOIVENT TOUS ÊTRE SUR LE MÊME RÉSAUX.**
+  **ATTENTION: POUR UTILISER CETTE APP, LES UTILISATEURS DOIVENT TOUS ÊTRE SUR LE MÊME RÉSEAU.**
    Pour démarrer le serveur, ouvrez simplement le fichier `server.py` et faites tourner le code **sur un seul des ordinateurs du résaux**
 
 3. **Correction de l'addresse IP**:
