@@ -9,11 +9,11 @@ it is because it has no argument besides self or returns nothing.
 import os.path  # Needed for .exe compilation
 import sys  # Needed for .exe compilation
 import tkinter as tk
-from tkinter import Tk, Scrollbar
-from PIL import Image, ImageTk
-from datetime import datetime  # To add the time of the message
-import time  # For debugging
 import math
+import time  # For debugging
+from PIL import Image, ImageTk
+from tkinter import Tk, Scrollbar
+from datetime import datetime  # To add the time of the message
 
 
 def get_path(filename):
@@ -33,8 +33,7 @@ def get_path(filename):
     """
     if hasattr(sys, "_MEIPASS"):
         return os.path.join(sys._MEIPASS, filename)
-    else:
-        return filename
+    return filename
 
 
 class WhatsDownMainWindow:
@@ -44,12 +43,12 @@ class WhatsDownMainWindow:
     Attributes:
     - messages: List to store chat messages.
     - background_image: PhotoImage object for the background.
-    - colorMe: Color code for messages sent by the local client.
-    - colorOther: Color code for messages sent by other clients.
-    - colorWarning: Color code for warning messages.
-    - colorError: Color code for error messages.
+    - color_me: Color code for messages sent by the local client.
+    - color_other: Color code for messages sent by other clients.
+    - color_warning: Color code for warning messages.
+    - color_error: Color code for error messages.
     - text_color: Color code for text.
-    - localClient: Instance of the local client.
+    - local_client: Instance of the local client.
     - screen_width: Width of the main window.
     - screen_height: Height of the main window.
     - input_box_height: Height of the input box.
@@ -74,7 +73,7 @@ class WhatsDownMainWindow:
     - fibonacci: Calculates the nth Fibonacci number recursively.
     """
 
-    def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, LOCALCLIENT):
+    def __init__(self, WINDOW_WIDTH, WINDOW_HEIGHT, LOCAL_CLIENT):
         """
         Creates the main application window.
 
@@ -86,12 +85,12 @@ class WhatsDownMainWindow:
         # Initialize the variables
         self.messages = []
         self.background_image = None
-        self.colorMe = "lightgreen"
-        self.colorOther = "lightblue"
-        self.colorWarning = "yellow"
-        self.colorError = "red"
+        self.color_me = "lightgreen"
+        self.color_other = "lightblue"
+        self.color_warning = "yellow"
+        self.color_error = "red"
         self.text_color = "black"
-        self.localClient = LOCALCLIENT
+        self.local_client = LOCAL_CLIENT
 
         # Set window width and height
         self.screen_width = WINDOW_WIDTH
@@ -102,7 +101,7 @@ class WhatsDownMainWindow:
         self.button_size = self.input_box_height  # Set the send button size
 
         # Set window title
-        self.title = f"Whatsdown! Logged in as: {self.localClient.login}"
+        self.title = f"Whatsdown! Logged in as: {self.local_client.login}"
 
         # Create the main application window
         self.root = Tk()
@@ -167,8 +166,7 @@ class WhatsDownMainWindow:
         # Import the send button and resize it
         send_icon = ImageTk.PhotoImage(
             Image.open(get_path("send_icon.png")).resize(
-                (int(self.button_size * 0.8), int(self.button_size * 1)),
-                Image.BOX))
+                (int(self.button_size * 0.8), int(self.button_size * 1))))
         # Create the send button and add the image on it
         self.send_button = tk.Button(self.root,
                                      height=int(self.button_size * 0.8),
@@ -199,11 +197,11 @@ class WhatsDownMainWindow:
         """
         try:
             # Sends the message to disconnect the client from server
-            self.localClient.send(self.localClient.DISCONNECT_MESSAGE)
+            self.local_client.send(self.local_client.DISCONNECT_MESSAGE)
         except:
             pass
-        self.localClient.connected = False
-        self.localClient.client.close()
+        self.local_client.connected = False
+        self.local_client.client.close()
         self.root.destroy()  # To close the window
         quit()
 
@@ -235,20 +233,20 @@ class WhatsDownMainWindow:
         This function repeats itself every 100ms.
         """
         # Check if the chat file exists
-        if self.localClient.loadChatFile and self.localClient.newMessage:
+        if self.local_client.loadChatFile and self.local_client.newMessage:
             self.display_message_list()  # Displays the saved messages
-            self.localClient.loadChatFile = False  # Nothing more to do
+            self.local_client.loadChatFile = False  # Nothing more to do
             # No new message for the moment
-            self.localClient.newMessage = False
+            self.local_client.newMessage = False
 
         # Check if there are new messages
-        if self.localClient.newMessage:
+        if self.local_client.newMessage:
             # Display the last message from message_list
             # which is stored in localClient
-            self.display_message(self.localClient.message_list[-1][1],
-                                 self.localClient.message_list[-1][0])
+            self.display_message(self.local_client.message_list[-1][1],
+                                 self.local_client.message_list[-1][0])
             # No new message for the moment
-            self.localClient.newMessage = False
+            self.local_client.newMessage = False
 
         # Check again in 100ms
         self.root.after(100, self.check_new_message)
@@ -266,7 +264,7 @@ class WhatsDownMainWindow:
         self.input_box.delete("0", tk.END)
 
         # Don't send if the message content is empty
-        if input_text == "" or input_text == " ":
+        if input_text in ("", " "):
             return
 
         # Check if the message is a command
@@ -274,7 +272,7 @@ class WhatsDownMainWindow:
             arguments = input_text.split()
 
             # Disconnect client if client send the disconnect message
-            if input_text == self.localClient.DISCONNECT_MESSAGE:
+            if input_text == self.local_client.DISCONNECT_MESSAGE:
                 self.on_close()
 
             # Send the fibonacci sequence
@@ -309,7 +307,7 @@ class WhatsDownMainWindow:
                                          "Warning")
                     return
 
-                self.localClient.send(f"The fibonacci number {n} is:"
+                self.local_client.send(f"The fibonacci number {n} is:"
                                       f" {self.fibonacci(n)}")
 
             else:  # If command not found, display error message
@@ -319,7 +317,7 @@ class WhatsDownMainWindow:
 
         # If not a command send the message directly
         else:
-            self.localClient.send(input_text)
+            self.local_client.send(input_text)
 
     # Do we need the "where" argument since it's always the same?
     def display_message(self, message, who):
@@ -342,14 +340,14 @@ class WhatsDownMainWindow:
         # Place the name at the top of the frame
         sender.grid(column=0, row=0, sticky="w")
         # Color of message content background
-        color = self.colorOther
+        color = self.color_other
 
-        if who == self.localClient.login:
-            color = self.colorMe
+        if who == self.local_client.login:
+            color = self.color_me
         elif who == "Error":
-            color = self.colorError
+            color = self.color_error
         elif who == "Warning":
-            color = self.colorWarning
+            color = self.color_warning
 
         # Calculate the height of the message (it is an approximation)
         desired_height = math.ceil(len(message) / 56)
@@ -366,7 +364,7 @@ class WhatsDownMainWindow:
         message_text.config(state=tk.DISABLED)
         # To avoid overlapping sender's name, we set the row to 1.
         message_text.grid(column=0, row=1, sticky="w")
-        # Place the frame in the grid layout, adjusting the row to 
+        # Place the frame in the grid layout, adjusting the row to
         # avoid overlap.
         # The row increments automatically.
         frame.grid(column=0, row=self.canvas_frame.grid_size()[1])
@@ -379,7 +377,7 @@ class WhatsDownMainWindow:
         Displays all the messages in the message list at once.
         """
         # Get the list from server
-        messages = self.localClient.message_list
+        messages = self.local_client.message_list
         # Display the messages in order, one by one
         for login, msg in messages:
             self.display_message(msg, login)
@@ -402,7 +400,6 @@ class WhatsDownLoginPage:
     This class is not in use yet
     Pre-made for future, more sophisticated verions of the app
     """
-
     def __init__(self, SIZEX, SIZEY):
         """
         Crée la page de connexion de l'application avec les valeurs de défaut
