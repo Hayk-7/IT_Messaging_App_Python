@@ -404,7 +404,10 @@ class WhatsDownLoginPage:
     """
 
     def __init__(self, SIZE_X, SIZE_Y):
-        """Crée la page de connexion de l'application avec les valeurs de défaut."""
+        """
+        Crée la page de connexion de l'application avec
+        les valeurs de défaut.
+        """
         self.root = Tk()
         self.root.geometry(f"{SIZE_X}x{SIZE_Y}")
         self.root.title("WhatsDown! - Login")
