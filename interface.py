@@ -273,7 +273,7 @@ class WhatsDownMainWindow:
                     n = int(arguments[1])
                 except ValueError:
                     self.display_message(arguments[0] +
-                                         " requires an int as an argument !",  # I put int to be <80 CHAR!!!
+                                         " requires an int as an argument !",
                                          "Error")
                     return
 
@@ -346,7 +346,8 @@ class WhatsDownMainWindow:
         message_text.config(state=tk.DISABLED)
         # To avoid overlapping sender's name, we set the row to 1.
         message_text.grid(column=0, row=1, sticky="w")
-        # Place the frame in the grid layout, adjusting the row to avoid overlap.
+        # Place the frame in the grid layout, adjusting the row to 
+        # avoid overlap.
         # The row increments automatically.
         frame.grid(column=0, row=self.canvas_frame.grid_size()[1])
 
