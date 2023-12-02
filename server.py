@@ -100,7 +100,7 @@ def sendMessageList(msg_list, conn):
 
     Arguments:
         - msg_list: list of all messages
-        - conn: # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI
+        - conn: the connection to which the messages are sent
     """
 
     # Get length of list
@@ -164,8 +164,8 @@ def handleClient(conn, addr):
     Handles communication with a connected client, managing message exchange
 
     Arguments:
-        - conn:  # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI
-        - addr:  # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI
+        - conn:  The connection that was established with the client
+        - addr:  The connection's local address
     Return:
         - None: just exit the function
     """

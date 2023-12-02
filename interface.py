@@ -3,16 +3,11 @@ Code for the WhatsDown application interface.
 
 Created on Tue Oct 23 19:44:37 1947
 @author: H, R
-
-Comment: if we do not specify the arguments of what a function returns,
-it is because it has no argument besides self or returns nothing.
 """
 import os.path  # Needed for .exe compilation
 import sys  # Needed for .exe compilation
 import tkinter as tk
 import math
-import time  # For debugging
-from datetime import datetime  # To add the time of the message
 from tkinter import Tk, Scrollbar
 from PIL import Image, ImageTk
 
@@ -81,7 +76,7 @@ class WhatsDownMainWindow:
         Args:
         - WINDOW_WIDTH: Width of the main window.
         - WINDOW_HEIGHT: Height of the main window.
-        - LOCALCLIENT: Instance of the local client.
+        - LOCAL_CLIENT: Instance of the local client.
         """
         # Initialize the variables
         self.messages = []
@@ -334,8 +329,6 @@ class WhatsDownMainWindow:
             - message: content
             - who: sender
         The message color is chosen according to who is the sender
-        If something is wrong with the message send a red error message
-        If our code isn't able to do something, the message will be yellow
         """
         # Creates the frame: the box which will contain all
         # the information of the message.
