@@ -72,7 +72,7 @@ class Client:
         on specified port.
         """
 
-        findServer = input("1) Scan for the server? \n2) Enter IP address? \n")
+        findServer = input("1) Automatically scan for the server? \n2) Enter IP address? \n")
         if findServer == "1":
             self.SERVER = self.findServerHome()
         else:
