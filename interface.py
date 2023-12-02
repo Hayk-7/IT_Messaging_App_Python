@@ -9,9 +9,7 @@ import tkinter as tk
 from tkinter import ttk, Tk, Scrollbar
 from PIL import Image, ImageTk
 from datetime import datetime  # To add the time of the message
-import time
-
-from datetime import datetime  # On peut ajouter l'heure de l'envoi du message
+import time  # For debugging
 import math
 
 
@@ -109,18 +107,22 @@ class WhatsDownMainWindow:
         # Set window size and open the window in the center of the screen
         self.root.geometry(
             f"{self.screen_width}x{self.screen_height}+"
-            f"{int(self.root.winfo_screenwidth() / 2 - self.screen_width / 2)}+{0}")
+            f"{int(self.root.winfo_screenwidth() / 2 - self.screen_width / 2)}"
+            f"+{0}")
 
         # Set window title and icon
         self.root.title(self.title)
         self.root.iconbitmap(get_path("icon.ico"))
 
-        # If we don't put everything in one common frame, the display is messed up
-        self.hold_all_in_one_frame = ttk.Frame(self.root, height=self.screen_height)
+        # If we don't put everything in one common frame,
+        # the display is messed up
+        self.hold_all_in_one_frame = ttk.Frame(self.root,
+                                               height=self.screen_height)
         self.hold_all_in_one_frame.pack(fill=tk.BOTH, expand=True)
 
         # Create a canvas to hold the chat window
-        self.canvas = tk.Canvas(self.hold_all_in_one_frame, height=self.screen_height)
+        self.canvas = tk.Canvas(self.hold_all_in_one_frame,
+                                height=self.screen_height)
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Add scrollbar for when many messages go out of the screen
@@ -158,9 +160,11 @@ class WhatsDownMainWindow:
                 (int(self.button_size * 0.8), int(self.button_size * 1)),
                 Image.BOX))
         # Create the send button and add the image on it
-        self.send_button = tk.Button(self.root, height=int(self.button_size * 0.8),
+        self.send_button = tk.Button(self.root,
+                                     height=int(self.button_size * 0.8),
                                      width=int(self.button_size * 1),
-                                     image=send_icon, command=lambda: self.handle_input())
+                                     image=send_icon,
+                                     command=lambda: self.handle_input())
         # Show the send button
         self.send_button.pack(side=tk.LEFT)
 
@@ -168,7 +172,7 @@ class WhatsDownMainWindow:
         # Configure the scroll region => the scroll bar will be updated
         # when new messages are added
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
-        self.scroll() # Scroll to the bottom of the canvas in the beginning
+        self.scroll()  # Scroll to the bottom of the canvas in the beginning
 
         # Add the event listener for when the user closes the window
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -177,7 +181,6 @@ class WhatsDownMainWindow:
         self.root.resizable(False, False)
         # Makes the code wait for events until we close the window
         self.root.mainloop()
-
 
     def on_close(self):
         """
@@ -192,7 +195,6 @@ class WhatsDownMainWindow:
         self.localClient.client.close()
         self.root.destroy()  # To close the window
         quit()
-
 
     def on_enter_press(self, event):
         """
@@ -227,7 +229,8 @@ class WhatsDownMainWindow:
         # Check if there are new messages
         if self.localClient.newMessage:
             # Display the messages
-            self.display_message(self.localClient.message_list[-1][1], self.localClient.message_list[-1][0])
+            self.display_message(self.localClient.message_list[-1][1],
+                                 self.localClient.message_list[-1][0])
             self.localClient.newMessage = False
 
         # Check again in 100ms
@@ -239,8 +242,10 @@ class WhatsDownMainWindow:
         Sends the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
         """
-        input_text = self.input_box.get()  # Get input
-        self.input_box.delete("0", tk.END)  # Clear input from beginning to end
+        # Get input
+        input_text = self.input_box.get()
+        # Clear input from beginning to end
+        self.input_box.delete("0", tk.END)
 
         # Don't send if message is empty
         if input_text == "" or input_text == " ":
@@ -258,29 +263,40 @@ class WhatsDownMainWindow:
             elif input_text.startswith("/fibonacci"):
                 # Handle case where user doesn't provide arguments
                 if len(arguments) < 2:
-                    self.display_message(arguments[0] + " requires 1 argument (int)!", "Error")
+                    self.display_message(arguments[0] +
+                                         " requires 1 argument (int)!",
+                                         "Error")
                     return
 
                 # Handle case where user doesn't provide an integer
                 try:
                     n = int(arguments[1])
                 except ValueError:
-                    self.display_message(arguments[0] + " requires an integer as an argument!", "Error")
+                    self.display_message(arguments[0] +
+                                         " requires an int as an argument !",  # I put int to be <80 CHAR!!!
+                                         "Error")
                     return
 
-                # Handle case where user inputs invalid integer (less than 1 or more than 30)
+                # Handle case where user inputs invalid integer
+                # (less than 1 or more than 30)
                 if n < 0:
-                    self.display_message(arguments[0] + " requires a positive integer !", "Error")
+                    self.display_message(arguments[0] +
+                                         " requires a positive integer !",
+                                         "Error")
                     return
                 # Handle case where user inputs a too big integer
                 if n > 30:
-                    self.display_message(arguments[0] + " requires an integer smaller than 31 !", "Warning")
+                    self.display_message(arguments[0] +
+                                         " requires an int smaller than 31 !",
+                                         "Warning")
                     return
 
-                self.localClient.send(f"The fibonacci number {n} is: {self.fibonacci(n)}")
+                self.localClient.send(f"The fibonacci number {n} is:"
+                                      f" {self.fibonacci(n)}")
 
             else:  # If command not found, display error message
-                self.display_message(arguments[0] + " | Command not found!", "Error")
+                self.display_message(arguments[0] + " | Command not found!",
+                                     "Error")
                 return
 
         # If not a command send the message directly
@@ -294,10 +310,19 @@ class WhatsDownMainWindow:
         and color depending on who sent it.
         :param message: content
         :param who: sender
+        The message color is chosen according to who is the sender
+        If something is wrong with the message send a red error message
+        If our code isn't able to do something, the message will be yellow
         """
+        # Creates the frame: the box which will contain all
+        # the information of the message.
         frame = ttk.Frame(self.canvas_frame)
-        sender = ttk.Label(frame, text=f"{who} says:", font=("Comic Sans MS", 8, "italic"))
+        # Create a label in the frame to indicate sender's name
+        sender = ttk.Label(frame, text=f"{who} says:",
+                           font=("Comic Sans MS", 8, "italic"))
+        # Place the name at the top of the frame
         sender.grid(column=0, row=0, sticky="w")
+        # Color of message content background
         color = self.colorOther
 
         if who == self.localClient.login:
@@ -311,15 +336,19 @@ class WhatsDownMainWindow:
         desired_height = math.ceil(len(message) / 56)
 
         # Create the text box
-        message_text = tk.Text(frame, wrap=tk.WORD, width=int(self.screen_width / 8.3),
+        message_text = tk.Text(frame, wrap=tk.WORD,
+                               width=int(self.screen_width / 8.3),
                                height=desired_height, bg=color)
 
+        # Add the message at the end of the text box
         message_text.insert(tk.END, f"{message}")
         #  We can't modify the text after it is sent
         message_text.config(state=tk.DISABLED)
-        message_text.grid(column=0, row=1, sticky="w")  # TO BE COMMENTED GRIIID
-        frame.grid(column=0, row=self.canvas_frame.grid_size()[1], sticky="w")
-        self.canvas_frame.grid_columnconfigure(0, weight=1)
+        # To avoid overlapping sender's name, we set the row to 1.
+        message_text.grid(column=0, row=1, sticky="w")
+        # Place the frame in the grid layout, adjusting the row to avoid overlap.
+        # The row increments automatically.
+        frame.grid(column=0, row=self.canvas_frame.grid_size()[1])
 
         # Scroll to the bottom of the canvas to see the new message
         self.scroll()
@@ -349,6 +378,7 @@ class WhatsDownLoginPage:
     This class is not in use yet
     Pre-made for future, more sophisticated verions of the app
     """
+
     def __init__(self, SIZEX, SIZEY):
         """
         Crée la page de connexion de l'application avec les valeurs de défaut
@@ -361,7 +391,6 @@ class WhatsDownLoginPage:
         self.login = ""
 
         self.root.mainloop()
-
 
     def get_login(self):
         """
