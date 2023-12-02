@@ -25,14 +25,14 @@ class Client:
     - connected: Flag indicating if the client is connected.
     - client: Socket object for communication.
     - message_list: List to store all messages.
-    - newMessage: Flag indicating the presence of new messages.
+    - new_message: Flag indicating the presence of new messages.
     - loadChatFile: Flag indicating the need to load the chat file.
 
     Methods:
     - __init__: Initializes the client with provided login.
     - connect: Connects the client to the server and starts the listener thread.
-    - findServerSchool: Scans the local network for the server's IP address.
-    - findServerHome: Scans a home network for the server's IP address.
+    - find_server_school: Scans the local network for the server's IP address.
+    - find_server_home: Scans a home network for the server's IP address.
     - send: Sends a message to the server.
     - receive: Receives messages from the server and updates message_list.
     - listen: Continuously listens for incoming messages from the server.
@@ -40,13 +40,15 @@ class Client:
     def __init__(self, LOGIN):
         """
         Initializes the client with provided login.
-        :param LOGIN:
+        Argument:
+            - LOGIN: Login information of the client.
         """
-        # HEADERLEN = Information about the message to be received (in this case, the length of the message)
+        # HEADERLEN = Information about the message
+        # to be received (in this case, the length of the message)
         self.HEADERLEN = 64
         # FORMAT = The format (encryption) of the messages
         self.FORMAT = "utf-8"
-        self.DEFAULT_PORT = 6969
+        self.DEFAULT_PORT = 7070
         self.DISCONNECT_MESSAGE = "/dc"
         self.SERVER = None
 
@@ -60,17 +62,17 @@ class Client:
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.message_list = []
-        self.newMessage = False
-        self.loadChatFile = False
+        self.new_message = False
+        self.load_chat_file = False
 
     def connect(self):
         """
         Connects the client to the server and starts the listener thread
         on specified port.
         """
-        self.SERVER = self.findServerHome()
+        self.SERVER = self.find_server_home()
 
-        # Connect the socket to the port 6969
+        # Connect the socket to the port 7070
         self.client.connect((self.SERVER, self.DEFAULT_PORT))
         self.client.send(bytes("PERMANENT", self.FORMAT))
         self.connected = True
@@ -81,15 +83,16 @@ class Client:
 
         self.client.send(bytes(self.login, self.FORMAT))
 
-        # Listen for messages from the server and be able to send messages to the server at the same time using
+        # Listen for messages from the server and be able
+        # to send messages to the server at the same time using
         # threading
         self.listener = threading.Thread(target=self.listen)
         self.listener.start()
 
     # Scan local network for open port DEFAULT_PORT
-    def findServerSchool(self):
+    def find_server_school(self):
         """
-        Scans the school network for the server's IP address.
+        Scan the school network for the server's IP address.
         returns IP address of the server, if found.
         """
         s = time.time()
@@ -111,16 +114,16 @@ class Client:
         sock.close()
         print("No server found")
 
-    def findServerHome(self):
+    def find_server_home(self):
         """
         Scans the home network for the server's IP address.
         returns IP address of the server, if found.
         """
         s = time.time()
-        for x1 in range(168, 169):
-            for x2 in range(1, 100):
+        for x1 in range(30, 169):
+            for x2 in range(32, 100):
                 for x3 in range(100):
-                    ip = f"192.{x1}.{x2}.{x3}"
+                    ip = f"172.{x1}.{x2}.{x3}"
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     # Times out quickly if the server is not found
                     sock.settimeout(0.0001)
@@ -136,6 +139,11 @@ class Client:
         print("No server found")
 
     def send(self, msg):
+        """
+        Sends a message to the server.
+        Argument:
+            - msg: Message to be sent.
+        """
         # Encode the message
         message = msg.encode(self.FORMAT)
         # Get the length of the message
@@ -164,7 +172,7 @@ class Client:
                 # Receive data from the server
                 msg = self.client.recv(msg_length).decode(self.FORMAT)
                 if msg == "LoadChatFile":
-                    self.loadChatFile = True
+                    self.load_chat_file = True
         elif msg_type == 1:
             # Empty the message list
             self.message_list = []
@@ -189,8 +197,8 @@ class Client:
                 # Add the login and message to the message list
                 self.message_list.append((login, msg))
 
-            # Set newMessage to True so that the interface can display the messages
-            self.newMessage = True
+            # Set new_message to True so that the interface can display the messages
+            self.new_message = True
 
     def listen(self):
         """
