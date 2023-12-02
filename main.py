@@ -10,9 +10,7 @@ import interface
 
 
 def main():
-    """
-    Fonction principale pour exécuter le programme.
-    """
+    """Fonction principale pour exécuter le programme."""
     try:
         # Demander à l'utilisateur les informations de connexion
         login = input("Entrez votre identifiant : ")

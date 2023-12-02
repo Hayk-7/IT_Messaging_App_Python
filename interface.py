@@ -259,7 +259,9 @@ class WhatsDownMainWindow:
         """
         Send the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
-        We return None just to exit the function.
+
+        Return:
+            - None: to exit the function
         """
         # Get input in input box
         input_text = self.input_box.get()
