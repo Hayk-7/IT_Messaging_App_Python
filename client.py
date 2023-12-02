@@ -46,7 +46,7 @@ class Client:
         self.HEADERLEN = 64
         # FORMAT = The format (encryption) of the messages
         self.FORMAT = "utf-8"
-        self.DEFAULT_PORT = 7070
+        self.DEFAULT_PORT = 6969
         self.DISCONNECT_MESSAGE = "/dc"
         self.SERVER = None
 
@@ -70,7 +70,7 @@ class Client:
         """
         self.SERVER = self.findServerHome()
 
-        # Connect the socket to the port 7070
+        # Connect the socket to the port 6969
         self.client.connect((self.SERVER, self.DEFAULT_PORT))
         self.client.send(bytes("PERMANENT", self.FORMAT))
         self.connected = True
@@ -96,15 +96,18 @@ class Client:
         for x1 in range(134, 178):  # Testing range
             for x2 in range(53,254):
                 for x3 in range(197, 250):
+                    ip = f"10.{x1}.{x2}.{x3}"
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    # Times out quickly if the server is not found
                     sock.settimeout(0.0001)
-                    print(f"Trying: 10.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
-                    result = sock.connect_ex((f"10.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
+                    print(f"[DEBUG] Trying: {ip}:{self.DEFAULT_PORT}")
+                    # Tries to connect to each server (bruteforce search)
+                    result = sock.connect_ex((ip, self.DEFAULT_PORT))
                     if result == 0:
                         e = time.time()
-                        print(f"Found: 10.{x1}.{x2}.{x3} in {e - s}s")
+                        print(f"Found:{ip} in {e - s}s")
                         sock.close()
-                        return f"10.{x1}.{x2}.{x3}"
+                        return ip
         sock.close()
         print("No server found")
 
@@ -114,20 +117,21 @@ class Client:
         returns IP address of the server, if found.
         """
         s = time.time()
-        for x1 in range(30, 169):
-            for x2 in range(32, 100):
+        for x1 in range(168, 169):
+            for x2 in range(1, 100):
                 for x3 in range(100):
+                    ip = f"192.{x1}.{x2}.{x3}"
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     # Times out quickly if the server is not found
                     sock.settimeout(0.0001)
-                    print(f"[DEBUG] Trying: 172.{x1}.{x2}.{x3}:{self.DEFAULT_PORT}")
+                    print(f"[DEBUG] Trying: {ip}:{self.DEFAULT_PORT}")
                     # Tries to connect to each server (bruteforce search)
-                    result = sock.connect_ex((f"172.{x1}.{x2}.{x3}", self.DEFAULT_PORT))
+                    result = sock.connect_ex((ip, self.DEFAULT_PORT))
                     if result == 0:
                         e = time.time()
-                        print(f"Found: 172.{x1}.{x2}.{x3} in {e - s}s")
+                        print(f"Found:{ip} in {e - s}s")
                         sock.close()
-                        return f"172.{x1}.{x2}.{x3}"
+                        return ip
         sock.close()
         print("No server found")
 
