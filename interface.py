@@ -9,7 +9,7 @@ it is because it has no argument besides self or returns nothing.
 import os.path  # Needed for .exe compilation
 import sys  # Needed for .exe compilation
 import tkinter as tk
-from tkinter import ttk, Tk, Scrollbar
+from tkinter import Tk, Scrollbar
 from PIL import Image, ImageTk
 from datetime import datetime  # To add the time of the message
 import time  # For debugging
@@ -140,7 +140,7 @@ class WhatsDownMainWindow:
         self.canvas.config(yscrollcommand=self.scrollbar.set)
 
         # Create a frame inside the canvas to display the messages
-        # We are not allowed to add window on canvas direclty
+        # We are not allowed to add window on canvas directly
         self.canvas_frame = tk.Frame(self.canvas)
 
         # This is the window which on which everything will be displayed
@@ -238,7 +238,8 @@ class WhatsDownMainWindow:
         if self.localClient.loadChatFile and self.localClient.newMessage:
             self.display_message_list()  # Displays the saved messages
             self.localClient.loadChatFile = False  # Nothing more to do
-            self.localClient.newMessage = False  # No new message for the moment
+            # No new message for the moment
+            self.localClient.newMessage = False
 
         # Check if there are new messages
         if self.localClient.newMessage:
@@ -246,7 +247,8 @@ class WhatsDownMainWindow:
             # which is stored in localClient
             self.display_message(self.localClient.message_list[-1][1],
                                  self.localClient.message_list[-1][0])
-            self.localClient.newMessage = False  # No new message for the moment
+            # No new message for the moment
+            self.localClient.newMessage = False
 
         # Check again in 100ms
         self.root.after(100, self.check_new_message)
@@ -374,19 +376,22 @@ class WhatsDownMainWindow:
 
     def display_message_list(self):
         """
-        Affiche la liste des messages dans la fenêtre.
+        Displays all the messages in the message list at once.
         """
-        # Prend la liste de messages du serveur
+        # Get the list from server
         messages = self.localClient.message_list
-        # Affiche les messages un par un
+        # Display the messages in order, one by one
         for login, msg in messages:
             self.display_message(msg, login)
 
     def fibonacci(self, n):
         """
-        Calcule le n-ième nombre de Fibonacci récursivement.
+        Calculate recursively the n-th number of
+        the fibonacci sequence. It is a terminal recursion,
+        therefore, we did a basic fibonacci function which
+        takes too much time for n > 30.
         """
-        if n == 0 or n == 1:
+        if n == 0 or n == 1:  # Initial case
             return n
 
         return self.fibonacci(n - 1) + self.fibonacci(n - 2)
