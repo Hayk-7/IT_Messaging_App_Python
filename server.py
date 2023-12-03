@@ -22,10 +22,10 @@ Constants:
 - ADDR: Tuple containing the server IP address and port
 
 Functions:
-- sendMessage(msg, conn): Sends a single message to the specified connection.
-- sendMessageList(msg_list, conn): Sends a list of messages to the specified
+- send_message(msg, conn): Sends a single message to the specified connection.
+- send_message_list(msg_list, conn): Sends a list of messages to the specified
 connection.
-- saveMessageList(msg_list): Saves the list of messages to a file named after
+- save_message_list(msg_list): Saves the list of messages to a file named after
 the users in the conversation.
 - load_message_list(users): Loads the list of messages from a file based on the
 users in the conversation.
@@ -69,7 +69,7 @@ client_list = {}
 message_list = []
 
 
-def sendMessage(msg, conn):
+def send_message(msg, conn):
     """
     Sends a message to the specified connection.
 
@@ -94,7 +94,7 @@ def sendMessage(msg, conn):
     conn.send(message)
 
 
-def sendMessageList(msg_list, conn):
+def send_message_list(msg_list, conn):
     """
     Sends the whole list of messages to the specified connection.
 
@@ -115,11 +115,11 @@ def sendMessageList(msg_list, conn):
     conn.send(send_list_length)
     # Send the list
     for login, msg in msg_list:
-        sendMessage(login, conn)
-        sendMessage(msg, conn)
+        send_message(login, conn)
+        send_message(msg, conn)
 
 
-def saveMessageList(msg_list):
+def save_message_list(msg_list):
     """
     Saves the list of messages to a file named after
     the users in the conversation.
@@ -195,8 +195,8 @@ def handle_client(conn, addr):
         message_list = load_message_list(users)
         if message_list:
             for conn in client_list.keys():
-                sendMessage("LoadChatFile", conn)
-                sendMessageList(message_list, conn)
+                send_message("LoadChatFile", conn)
+                send_message_list(message_list, conn)
 
     while True:
         try:
@@ -219,10 +219,10 @@ def handle_client(conn, addr):
                 message_list.append([login, msg])
                 # If there are more than 1 client, save the messages in a file
                 if len(client_list) > 1:
-                    saveMessageList(message_list)
+                    save_message_list(message_list)
                 # Send the message to all the clients
                 for client in client_list.keys():
-                    sendMessageList(message_list, client)
+                    send_message_list(message_list, client)
         except:
             break
 
