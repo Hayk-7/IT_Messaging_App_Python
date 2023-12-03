@@ -27,9 +27,9 @@ Functions:
 connection.
 - saveMessageList(msg_list): Saves the list of messages to a file named after
 the users in the conversation.
-- loadMessageList(users): Loads the list of messages from a file based on the
+- load_message_list(users): Loads the list of messages from a file based on the
 users in the conversation.
-- handleClient(conn, addr): Handles communication with a connected client,
+- handle_client(conn, addr): Handles communication with a connected client,
 managing message exchange and storage.
 - start(): Starts the server, listens for incoming connections, and handles
 each connection in a separate thread.
@@ -139,7 +139,7 @@ def saveMessageList(msg_list):
             f.write(f"{login}[:::]{msg}\n")
 
 
-def loadMessageList(users):
+def load_message_list(users):
     """
     Loads the list of messages from a file based on
     the users in the conversation.
@@ -159,7 +159,7 @@ def loadMessageList(users):
         return msg_list
 
 
-def handleClient(conn, addr):
+def handle_client(conn, addr):
     """
     Handles communication with a connected client, managing message exchange
 
@@ -192,7 +192,7 @@ def handleClient(conn, addr):
     if len(client_list) > 1:
         users = [login for login in client_list.values()]
         users.sort()
-        message_list = loadMessageList(users)
+        message_list = load_message_list(users)
         if message_list:
             for conn in client_list.keys():
                 sendMessage("LoadChatFile", conn)
@@ -242,7 +242,7 @@ def start():
         # Accept the connection from the client
         conn, address = server.accept()
         # Create a thread for each client (to handle multiple clients)
-        thread = threading.Thread(target=handleClient, args=(conn, address))
+        thread = threading.Thread(target=handle_client, args=(conn, address))
         thread.start()
 
 
