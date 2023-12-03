@@ -25,14 +25,14 @@ class Client:
     - connected: Flag indicating if the client is connected.
     - client: Socket object for communication.
     - message_list: List to store all messages.
-    - newMessage: Flag indicating the presence of new messages.
-    - loadChatFile: Flag indicating the need to load the chat file.
+    - new_message: Flag indicating the presence of new messages.
+    - load_chat_file: Flag indicating the need to load the chat file.
 
     Methods:
     - __init__: Initializes the client with provided login.
     - connect: Connects the client to the server and starts the listener thread.
-    - findServerSchool: Scans the local network for the server's IP address.
-    - findServerHome: Scans a home network for the server's IP address.
+    - find_server_school: Scans the local network for the server's IP address.
+    - find_server_home: Scans a home network for the server's IP address.
     - send: Sends a message to the server.
     - receive: Receives messages from the server and updates message_list.
     - listen: Continuously listens for incoming messages from the server.
@@ -74,7 +74,7 @@ class Client:
 
         findServer = input("1) Automatically scan for the server? \n2) Enter IP address? \n")
         if findServer == "1":
-            self.SERVER = self.findServerHome()
+            self.SERVER = self.find_server_home()
         else:
             result = 1
             while result != 0:
@@ -103,7 +103,7 @@ class Client:
         self.listener.start()
 
     # Scan local network for open port DEFAULT_PORT
-    def findServerSchool(self):
+    def find_server_school(self):
         """
         Scans the school network for the server's IP address.
         returns IP address of the server, if found.
@@ -127,7 +127,7 @@ class Client:
         sock.close()
         print("No server found")
 
-    def findServerHome(self):
+    def find_server_home(self):
         """
         Scans the home network for the server's IP address.
         returns IP address of the server, if found.
@@ -205,7 +205,7 @@ class Client:
                 # Add the login and message to the message list
                 self.message_list.append((login, msg))
 
-            # Set newMessage to True so that the interface can display the messages
+            # Set new_message to True so that the interface can display the messages
             self.new_message = True
 
     def listen(self):
