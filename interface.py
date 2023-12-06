@@ -200,7 +200,6 @@ class WhatsDownMainWindow:
         self.local_client.connected = False
         self.local_client.client.close()
         self.root.destroy()  # To close the window
-        quit()
 
     def on_enter_press(self, event):
         """
