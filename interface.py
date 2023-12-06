@@ -260,7 +260,7 @@ class WhatsDownMainWindow:
         self.input_box.delete("0", tk.END)
 
         # Don't send if the message content is empty
-        if input_text in ("", " "):
+        if input_text == "" or input_text.isspace():
             return
 
         # Check if the message is a command
@@ -299,12 +299,11 @@ class WhatsDownMainWindow:
                 # Handle case where user inputs a too big integer
                 if num > 30:
                     self.display_message(arguments[0] +
-                                         " should receive an integer smaller than 31!",
+                                         " shouldn't receive an integer above 30!",
                                          "Warning")
                     return
 
-                self.local_client.send(f"The fibonacci number {num} is:"
-                                       f"{self.fibonacci(num)}")
+                self.local_client.send(f"The {num}th fibonacci number is: {self.fibonacci(num)}")
 
             else:  # If command not found, display error message
                 self.display_message(arguments[0] + " | Command not found!",
