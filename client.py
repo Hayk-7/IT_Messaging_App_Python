@@ -74,7 +74,7 @@ class Client:
 
         findServer = input("1) Automatically scan for the server? \n2) Enter IP address? \n")
         if findServer == "1":
-            self.SERVER = self.find_server_home()
+            self.SERVER = self.find_server_school()
         else:
             result = 1
             while result != 0:
@@ -109,9 +109,9 @@ class Client:
         returns IP address of the server, if found.
         """
         s = time.time()
-        for x1 in range(134, 178):  # Testing range
-            for x2 in range(53,254):
-                for x3 in range(197, 250):
+        for x1 in range(133, 178):  # Testing range
+            for x2 in range(50, 60):
+                for x3 in range(50, 70):
                     ip = f"10.{x1}.{x2}.{x3}"
                     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     # Times out quickly if the server is not found
@@ -121,7 +121,7 @@ class Client:
                     result = sock.connect_ex((ip, self.DEFAULT_PORT))
                     if result == 0:
                         e = time.time()
-                        print(f"Found:{ip} in {e - s}s")
+                        print(f"[DEBUG] Found: {ip} in {e - s}s")
                         sock.close()
                         return ip
         sock.close()

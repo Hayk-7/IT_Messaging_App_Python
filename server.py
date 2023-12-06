@@ -75,7 +75,7 @@ def send_message(msg, conn):
 
     Arguments:
         - msg: message
-        - conn:  # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI # ATTENTION, CE N EST PAS COMPLETË ICI
+        - conn: the connection to which the messages are sent
     """
 
     # Encode the message
@@ -166,8 +166,6 @@ def handle_client(conn, addr):
     Arguments:
         - conn:  The connection that was established with the client
         - addr:  The connection's local address
-    Return:
-        - None: just exit the function
     """
     global client_list
     global message_list

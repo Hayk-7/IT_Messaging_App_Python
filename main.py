@@ -13,7 +13,10 @@ def main():
     """Fonction principale pour exécuter le programme."""
     try:
         # Demander à l'utilisateur les informations de connexion
-        login = input("Entrez votre identifiant : ")
+        login = input("Enter your username: ")
+
+        while login.isspace() or login == "" or len(login) > 20:
+            login = input("Please enter a valid username (<20 characters): ")
 
         # Créer un client en utilisant l'identifiant fourni
         local_client = client.Client(login)

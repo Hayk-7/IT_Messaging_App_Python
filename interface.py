@@ -254,9 +254,6 @@ class WhatsDownMainWindow:
         """
         Send the input text to the server and doesn't display it.
         Doesn't send the input text if it's empty.
-
-        Return:
-            - None: to exit the function
         """
         # Get input in input box
         input_text = self.input_box.get()
@@ -297,13 +294,13 @@ class WhatsDownMainWindow:
                 # (less than 1 or more than 30)
                 if num < 0:
                     self.display_message(arguments[0] +
-                                         " requires a positive integer !",
+                                         " requires a positive integer!",
                                          "Error")
                     return
                 # Handle case where user inputs a too big integer
                 if num > 30:
                     self.display_message(arguments[0] +
-                                         " requires an int smaller than 31 !",
+                                         " should receive an integer smaller than 31!",
                                          "Warning")
                     return
 
