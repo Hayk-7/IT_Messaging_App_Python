@@ -166,7 +166,7 @@ class WhatsDownMainWindow:
                                      height=int(self.button_size * 0.8),
                                      width=int(self.button_size * 1),
                                      image=send_icon,
-                                     command=self.handle_input())
+                                     command=lambda: self.handle_input())
         # Show the send button
         self.send_button.pack(side=tk.LEFT)
 
