@@ -104,9 +104,7 @@ class WhatsDownMainWindow:
 
         # Set window size and open the window in the center of the screen
         self.root.geometry(
-            f"{self.screen_width}x{self.screen_height}+"
-            f"{int(self.root.winfo_screenwidth() / 2 - self.screen_width / 2)}"
-            f"+{0}")
+            f"{self.screen_width}x{self.screen_height}")
 
         # Set window title and icon
         self.root.title(self.title)
@@ -168,7 +166,7 @@ class WhatsDownMainWindow:
                                      height=int(self.button_size * 0.8),
                                      width=int(self.button_size * 1),
                                      image=send_icon,
-                                     command=lambda: self.handle_input())
+                                     command=self.handle_input())
         # Show the send button
         self.send_button.pack(side=tk.LEFT)
 
